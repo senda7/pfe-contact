@@ -704,3 +704,29 @@ ValueError: Feature shape mismatch, expected: 6, got 7
 2026-04-17 11:51:59  WARNING   RSF non discriminant (mean_p30=0.914) → décision basée sur XGBoost + heuristique temporelle.
 2026-04-17 11:51:59  INFO      → total=4  avail=0  susp=3  na=1  (3883ms)
 2026-04-17 11:51:59  INFO      127.0.0.1 - - [17/Apr/2026 11:51:59] "POST /api/predict HTTP/1.1" 200 -
+2026-04-17 14:04:37  INFO        Contact Availability API »
+2026-04-17 14:04:37  INFO      ============================================================
+2026-04-17 14:04:37  INFO        Mode    : MongoDB
+2026-04-17 14:04:37  INFO        Écoute  : http://0.0.0.0:5001
+2026-04-17 14:04:37  INFO        Features XGB (13) : ['n_envois_hist', 'n_succes_hist', 'n_echecs_hist', 'echecs_consecutifs_max', 'echecs_consecutifs_fin', 'jours_depuis_dernier_envoi', 'jours_depuis_succes', 'score_recence_pondere', 'freq_inter_envoi_jours', 'duree_observation_jours', 'n_succes_30j', 'n_echecs_30j', 'taux_succes_30j']
+2026-04-17 14:04:37  INFO        Features RSF (8) : ['n_envois_hist', 'n_succes_hist', 'echecs_consecutifs_fin', 'jours_depuis_dernier_envoi', 'jours_depuis_succes', 'score_recence_pondere', 'n_succes_30j', 'taux_succes_30j']
+2026-04-17 14:04:37  INFO      ------------------------------------------------------------
+2026-04-17 14:04:37  INFO      Chargement du modèle → C:\pfe-contact\files\outputs\model_assets.joblib
+2026-04-17 14:04:37  INFO      Modèle XGBoost chargé → C:\pfe-contact\files\outputs\xgboost_model.json
+2026-04-17 14:04:37  INFO      Modèle chargé  v=11.0.0  sha=2d115689c25e  entraîné=2026-04-17T11:51:10.589567
+2026-04-17 14:04:37  INFO         Seuils → available≥55  suspected≥35  (source=pkg)
+2026-04-17 14:04:37  INFO         Fusion → w_xgb_short=0.65  w_rsf_short=0.35  w_short=0.5  w_long=0.5  (source=pkg)
+2026-04-17 14:04:37  INFO        Modèle pré-chargé au démarrage 
+2026-04-17 14:04:38  INFO      [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://192.168.1.112:5001
+2026-04-17 14:04:38  INFO      [33mPress CTRL+C to quit[0m
+2026-04-17 14:04:51  INFO      127.0.0.1 - - [17/Apr/2026 14:04:51] "GET /api/health HTTP/1.1" 200 -
+2026-04-17 14:04:51  INFO      127.0.0.1 - - [17/Apr/2026 14:04:51] "GET /api/contacts HTTP/1.1" 200 -
+2026-04-17 14:04:58  INFO      127.0.0.1 - - [17/Apr/2026 14:04:58] "OPTIONS /api/predict HTTP/1.1" 200 -
+2026-04-17 14:04:58  INFO      POST /api/predict  msisdns=7
+2026-04-17 14:04:58  WARNING   Validation warnings : ["Clés ignorées : ['campagne_id']"]
+2026-04-17 14:05:03  WARNING   RSF non discriminant (mean_p30=0.924) → décision basée sur XGBoost + heuristique temporelle.
+2026-04-17 14:05:03  INFO      → total=7  avail=3  susp=1  na=3  (4777ms)
+2026-04-17 14:05:03  INFO      127.0.0.1 - - [17/Apr/2026 14:05:03] "POST /api/predict HTTP/1.1" 200 -

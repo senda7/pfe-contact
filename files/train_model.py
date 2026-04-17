@@ -52,22 +52,20 @@ DLR_FAILURE = frozenset({2})
 DLR_NA = frozenset({0, 16, 34})
 DLR_TRANSIT = frozenset({4, 8})
 DLR_FINAL = DLR_SUCCESS | DLR_FAILURE
-
 XGB_FEATURE_COLS = [
-    'n_envois_hist',              # volume historique passé (sans dernier envoi)
-    'n_succes_hist',              # nb succès passés (absolus, pas ratio)
-    'n_echecs_hist',              # nb échecs passés (absolus, pas ratio)
-    'echecs_consecutifs_max',     # pire séquence d'échecs consécutifs (passé)
-    'echecs_consecutifs_fin',     # échecs consécutifs récents en fin d'historique
-    'jours_depuis_dernier_envoi', # ancienneté du dernier SMS connu
-    'jours_depuis_succes',        # ancienneté du dernier succès (999 si jamais)
-    'score_recence_pondere',      # score time-decay pondéré sur historique passé
-    'freq_inter_envoi_jours',     # cadence moyenne entre envois
-    'duree_observation_jours',    # étendue temporelle totale de l'historique
-    'n_succes_30j',               # nb succès dans les 30 derniers jours (hist_past)
-    'n_echecs_30j',               # nb échecs dans les 30 derniers jours (hist_past)
-    'taux_succes_30j',            # ratio succès/envois sur 30j (0 si aucun envoi)
-]
+    'n_envois_hist',
+    'n_succes_hist',
+    'n_echecs_hist',
+    'echecs_consecutifs_max',
+    'echecs_consecutifs_fin',
+    'jours_depuis_dernier_envoi',
+    'jours_depuis_succes',
+    'score_recence_pondere',
+    'freq_inter_envoi_jours',
+    'duree_observation_jours',
+    'n_succes_30j',
+    'n_echecs_30j',
+    'taux_succes_30j',]
 
 RSF_FEATURE_COLS = [
     'n_envois_hist',
@@ -85,14 +83,13 @@ RSF_EXTRA_COLS = [
     'duree_survie_jours',
 ]
 SCORE_THRESHOLDS = {
-    'available': 55,  # >= 55 → Available  (équilibre : assez bas pour ~5-15% Available, assez haut pour filtrer les NA)
-    'suspected': 35,  # >= 35 → Suspected
+    'available': 55,
+    'suspected': 35,
 }
 
 
 # =========================Extraction des données ==================================
 def load_from_mongodb():
-    """Générateur : parcourt la collection sans tout charger en RAM."""
     from pymongo import MongoClient
     client = MongoClient(CONFIG['MONGO_URI'])
     col = client[CONFIG['MONGO_DB']][CONFIG['MONGO_COL']]
@@ -204,34 +201,26 @@ def _label_from_last_envoi(last_status, hist_past, last_dt, now):
     if last_status in DLR_SUCCESS:
         return 'Available'
 
-    # Dernier envoi = échec (statut 2)
-    # Condition (a) : succès passé connu → Suspected
     if n_succes_past > 0:
         return 'Suspected'
 
-    # Condition (b) : premier envoi récent échoué (< 30j) → état ambigu → Suspected
     jours_depuis_last = (now - last_dt).days
     if not hist_past and jours_depuis_last < 30:
         return 'Suspected'
 
-    # Condition (c) : historique passé existant, tous en échec, mais échec très récent
     if hist_past:
         last_past_dt = hist_past[-1]['dt']
         jours_depuis_dernier_past = (now - last_past_dt).days
         if jours_depuis_dernier_past < 14:
             return 'Suspected'
-
-    # Aucune condition → NA confirmé
     return 'NA'
 
 
 def build_features(contacts):
-
     now = datetime.now()
     rows = []
-
     for c in contacts:
-        hist = c['history']  # trié chronologiquement par normalise_statuses
+        hist = c['history']
         if not hist:
             continue
 
@@ -487,11 +476,7 @@ def _tune_xgboost_grid(X_tr, y_tr, X_val, y_val, num_class, sw_tr=None, sw_val=N
 
 # ============================Training XGBoost (sans fuite de scaling car pas de scaling ici)=================
 def _apply_smote(X_tr, y_tr):
-    """
-    Rééchantillonnage avec SMOTETomek : sur-échantillonnage SMOTE des classes
-    minoritaires + nettoyage Tomek Links des points bruités en frontière.
-    Réduit les faux positifs vs SMOTE seul sur des classes fortement déséquilibrées.
-    """
+
     try:
         from imblearn.combine import SMOTETomek
         from imblearn.over_sampling import SMOTE
@@ -512,8 +497,7 @@ def _apply_smote(X_tr, y_tr):
 
         k_neighbors = min(5, min(counts[c] - 1 for c in sampling))
         smote = SMOTE(sampling_strategy=sampling, random_state=42, k_neighbors=k_neighbors)
-        # SMOTETomek : génère des synthétiques via SMOTE puis supprime les Tomek Links
-        # (paires inter-classes trop proches) pour nettoyer la frontière de décision.
+
         smt = SMOTETomek(smote=smote, random_state=42)
         X_res, y_res = smt.fit_resample(X_tr, y_tr)
         new_counts = dict(zip(*np.unique(y_res, return_counts=True)))
@@ -539,9 +523,7 @@ def _calibrate_available_threshold(model, X_val, y_val, label_map):
     precision, recall, thresholds = precision_recall_curve(y_true_bin, p_avail)
 
     THR_MIN, THR_MAX = 0.30, 0.55   # plafond abaissé de 0.75 → 0.55 pour débloquer Available
-    # PREC_MIN abaissé à 0.15 : avec Available ~14% des contacts, precision >= 0.25
-    # est quasi inatteignable sans perdre tout le recall sur val non-rééchantillonné.
-    # On accepte plus de faux positifs pour un volume de campagne viable.
+
     PREC_MIN = 0.15
 
     best_thr = THR_MIN
@@ -564,7 +546,6 @@ def _calibrate_available_threshold(model, X_val, y_val, label_map):
             f"Envisager d'enrichir les features ou d'augmenter le volume Available."
         )
 
-    # Calcul du recall au seuil retenu pour le log
     actual_recall = float(recall[np.searchsorted(thresholds, best_thr, side='right') - 1]) \
         if len(thresholds) > 0 else 0.0
     actual_prec = float(precision[np.searchsorted(thresholds, best_thr, side='right') - 1]) \
@@ -846,17 +827,14 @@ def train_rsf(df):
 
         rows = []
         for fn in surv_funcs:
-            # StepFunction : fn.x = time points, fn.y = survival probabilities
             times = fn.x
             surv  = fn.y
-            # Extrapolation : avant le premier point → surv=1.0, après le dernier → surv[-1]
             s7  = float(np.interp(t_7,  times, surv, left=1.0, right=surv[-1]))
             s30 = float(np.interp(t_30, times, surv, left=1.0, right=surv[-1]))
 
             p7  = float(np.clip(1.0 - s7,  0.0, 1.0))
             p30 = float(np.clip(1.0 - s30, 0.0, 1.0))
 
-            # Garantie de monotonie : p30 >= p7
             p30 = max(p30, p7)
 
             rows.append({
@@ -929,11 +907,7 @@ def _rsf_statistical_fallback(df):
 
 # ========================== Contact Availability Score ===============================================================
 def compute_scores(xgb_model, rsf_preds, X, avail_threshold=0.5, label_map=None, df_features=None):
-    """
-    df_features : DataFrame optionnel avec les features brutes (pour le fallback temporel
-    quand RSF est désactivé). Doit contenir au moins 'jours_depuis_succes' et 'score_recence_pondere'.
-    """
-    # Résoudre les indices des classes à partir du label_map
+
     if label_map is None:
         label_map = {'Available': 0, 'Suspected': 1, 'NA': 2}
     idx_avail   = label_map.get('Available', 0)
@@ -942,8 +916,6 @@ def compute_scores(xgb_model, rsf_preds, X, avail_threshold=0.5, label_map=None,
     n_classes   = len(label_map)
 
     xgb_proba = xgb_model.predict_proba(X)
-
-    # Vérifier que xgb_proba a le bon nombre de colonnes
     if xgb_proba.shape[1] != n_classes:
         log.warning(
             f"compute_scores : xgb_proba.shape[1]={xgb_proba.shape[1]} "
@@ -982,7 +954,6 @@ def compute_scores(xgb_model, rsf_preds, X, avail_threshold=0.5, label_map=None,
             "compute_scores : RSF non discriminant → décision basée sur XGBoost + heuristique temporelle."
         )
 
-    # Pré-calcul des features temporelles pour le fallback (si df_features fourni)
     jds_arr   = None
     srp_arr   = None
     t30_arr   = None
@@ -1023,21 +994,16 @@ def compute_scores(xgb_model, rsf_preds, X, avail_threshold=0.5, label_map=None,
             na_risk = float(np.clip(na_risk_fusion, 0.0, 1.0))
             p7_out, p30_out = p7, p30
         else:
-            # RSF absent/saturé : XGBoost + correctif temporel heuristique
-            # jours_depuis_succes : 999 = jamais de succès → pénalité max
-            # score_recence_pondere : négatif = historique de plus en plus mauvais
+
             temporal_penalty = 0.0
             if jds_arr is not None:
                 jds = jds_arr[i]
-                # Pénalité croissante : 0 si succès < 7j, max 0.20 si jamais de succès
                 temporal_penalty += float(np.clip(jds / 999.0, 0.0, 1.0)) * 0.20
             if srp_arr is not None:
                 srp = srp_arr[i]
-                # score_recence_pondere négatif → pénalité (max 0.10)
                 temporal_penalty += float(np.clip(-srp / 5.0, 0.0, 1.0)) * 0.10
             if ec_fin_arr is not None:
                 ec = ec_fin_arr[i]
-                # échecs consécutifs récents → pénalité (max 0.10 au-delà de 3)
                 temporal_penalty += float(np.clip(ec / 6.0, 0.0, 1.0)) * 0.10
 
             na_risk = float(np.clip(p_na_xgb + temporal_penalty, 0.0, 1.0))
