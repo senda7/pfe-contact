@@ -301,13 +301,9 @@ def build_features(contacts):
         evenement_na = (last_status in DLR_FAILURE)
         if len(hist) >= 2:
             prev_dt = hist[-2]['dt']  # avant-dernier envoi (dans hist complet, pas hist_past)
-            # Cap réduit à 30j (était 60j) : avec median=60j, toutes les durées se retrouvaient
-            # capées à la même valeur → unique_times RSF couvrait [1,60] sans valeur < 7j
-            # → p7 ≈ p30 pour tous les contacts → RSF non-discriminant.
-            # Avec cap=30j, on force des durées < 7j et des durées 7-30j → RSF discriminant.
+
             duree_survie_jours = max(1, min(int((last_dt - prev_dt).days), 30))
         else:
-            # Un seul envoi : délai depuis cet envoi jusqu'à aujourd'hui, capé à 30j
             duree_survie_jours = max(1, min(int((now - last_dt).days), 30))
 
         # ── Features de densité récente (fenêtre 30j glissante) ──────────────
@@ -1046,7 +1042,6 @@ def save_model(xgb_model, rsf_model, rsf_scaler, label_map, eval_metrics=None, a
         'avail_confident_thr': 0.85, 'avail_reduction': 0.30,
         'na_confident_thr': 0.80, 'na_confident_w': 0.70,
         'divergence_thr': 0.40, 'divergence_w_xgb': 0.60, 'divergence_w_rsf': 0.40,
-        # Seuil Available calibré
         'avail_threshold': avail_threshold,
     }
     artifacts = {

@@ -39,16 +39,14 @@ CONFIG: Dict[str, Any] = {
     'HOST'               : '0.0.0.0',
     'PORT'               : 5001,
     'DEBUG'              : False,
-    # Seuils de décision par défaut (alignés avec SCORE_THRESHOLDS corrigés de train_model.py)
-    'DEFAULT_THR_AVAILABLE' : 55,   # équilibre : 55 (était 50 trop permissif, 65 trop strict)
-    'DEFAULT_THR_SUSPECTED' : 35,   # équilibre : 35
-    # Paramètres de fusion par défaut (alignés avec FUSION_PARAMS de train_model.py)
+    'DEFAULT_THR_AVAILABLE' : 55,
+    'DEFAULT_THR_SUSPECTED' : 35,
     'DEFAULT_W_XGB_SHORT'   : 0.65,
     'DEFAULT_W_RSF_SHORT'   : 0.35,
-    'DEFAULT_W_XGB_LONG'    : 0.30,   # augmenté poids RSF long (était 0.40)
-    'DEFAULT_W_RSF_LONG'    : 0.70,   # p30 dominant (était 0.60)
-    'DEFAULT_W_SHORT'       : 0.50,   # équilibre short/long (était 0.65)
-    'DEFAULT_W_LONG'        : 0.50,   # équilibre short/long (était 0.35)
+    'DEFAULT_W_XGB_LONG'    : 0.30,
+    'DEFAULT_W_RSF_LONG'    : 0.70,
+    'DEFAULT_W_SHORT'       : 0.50,
+    'DEFAULT_W_LONG'        : 0.50,
     'DEFAULT_AVAIL_CONFIDENT_THR': 0.85,
     'DEFAULT_AVAIL_REDUCTION'    : 0.30,
     'DEFAULT_NA_CONFIDENT_THR'   : 0.80,
@@ -56,7 +54,6 @@ CONFIG: Dict[str, Any] = {
     'DEFAULT_DIVERGENCE_THR'     : 0.40,
     'DEFAULT_DIVERGENCE_W_XGB'   : 0.60,
     'DEFAULT_DIVERGENCE_W_RSF'   : 0.40,
-    # Validation MSISDN
     'MSISDN_MIN_LEN'     : 8,
     'MSISDN_MAX_LEN'     : 15,
     'MAX_MSISDNS_PER_REQ': 5_000,
@@ -466,10 +463,7 @@ def _all_progress() -> List[Dict]:
 
 # ═══════════════════════════ HISTORIQUE ══════════════════════════════════════
 def build_history_from_progress(msisdn: str, all_progress: List[Dict]) -> List[Dict]:
-    """
-    Construit l'historique trié d'un MSISDN depuis les données MongoDB/JSON.
-    Aligné avec filter_and_validate + normalise_statuses de train_model.py.
-    """
+
     DATE_FMT     = '%Y-%m-%d %H:%M:%S'
     VALID_STATUS = {1, 2, 4, 8}
     CLEAN_STATUS = {0, 16, 34}
@@ -515,22 +509,17 @@ def build_history_from_progress(msisdn: str, all_progress: List[Dict]) -> List[D
 
 
 def _normalise_history(history: List[Dict]) -> List[Dict]:
-    """Normalise les statuts DLR : 4→2, 8→2 (aligné avec DLR_NORM de train_model.py)."""
     return [
         {'status': DLR_NORM.get(h['status'], h['status']), 'dt': h['dt']}
         for h in history
     ]
-
 
 def build_features_from_history(
     msisdn: str,
     history: List[Dict],
     ref_date: Optional[datetime] = None,
 ) -> Optional[Dict]:
-    """
-    Calcule les 13 features XGB_FEATURE_COLS identiquement à build_features()
-    de train_model.py (séparation temporelle hist_past / last_entry incluse).
-    """
+
     if ref_date is None:
         ref_date = datetime.now()
     if not history:
@@ -608,13 +597,11 @@ def build_features_from_history(
     else:
         duree_observation_jours = 1
 
-    # Features densité récente 30j (fenêtre glissante sur hist_past à partir de last_dt)
     cutoff_30j  = last_dt - timedelta(days=30)
     hist_30j    = [h for h in hist_past if h['dt'] >= cutoff_30j]
     n_succes_30j = sum(1 for h in hist_30j if h['status'] in DLR_SUCCESS)
     n_echecs_30j = sum(1 for h in hist_30j if h['status'] in DLR_FAILURE)
     n_total_30j  = len(hist_30j)
-    # Lissage de Laplace (identique à train_model.py)
     taux_succes_30j = round((n_succes_30j + 1) / (n_total_30j + 2), 4)
 
     return {
@@ -652,10 +639,7 @@ def _default_available(msisdn: str) -> Dict:
 
 # ═══════════════════════════ RSF FALLBACK ════════════════════════════════════
 def _rsf_fallback_single(row: Dict) -> Tuple[float, float]:
-    """
-    Fallback heuristique RSF basé sur les nouvelles features (alignées train_model.py).
-    Utilisé uniquement si rsf_model est absent ou échoue.
-    """
+
     n_hist   = float(row.get('n_envois_hist', 0))
     n_succ   = float(row.get('n_succes_hist', 0))
     ec_fin   = float(row.get('echecs_consecutifs_fin', 0))
@@ -675,11 +659,9 @@ def _rsf_fallback_single(row: Dict) -> Tuple[float, float]:
     return round(risk * 0.65, 4), round(risk, 4)
 
 
-# ═══════════════════════ PRÉDICTION : fusion identique à train_model.py ══════
+# ═══════════════════════ PRÉDICTION : fusion  ══════════════════════════════
 def predict_contacts(feature_rows: List[Dict]) -> List[Dict]:
-    """
-    Réplique exactement la logique de compute_scores() de train_model.py.
-    """
+
     if not feature_rows:
         return []
 
@@ -712,7 +694,6 @@ def predict_contacts(feature_rows: List[Dict]) -> List[Dict]:
 
     xgb_proba = xgb_model.predict_proba(X_xgb)
 
-    # Sécurité : recadrer les indices si le modèle a moins de classes
     if xgb_proba.shape[1] != n_classes:
         log.warning(
             f"xgb_proba.shape[1]={xgb_proba.shape[1]} ≠ n_classes={n_classes}"
@@ -938,10 +919,7 @@ def predict():
 # ─────────────────────── POST /api/predict_direct ────────────────────────────
 @app.route('/api/predict_direct', methods=['POST'])
 def predict_direct():
-    """
-    Prédiction directe à partir de vecteurs de features pré-calculés.
-    Les features doivent correspondre à XGB_FEATURE_COLS (13 colonnes).
-    """
+
     body = request.get_json(silent=True)
     if not isinstance(body, dict) or 'contacts' not in body:
         return _err("Champ 'contacts' obligatoire (liste de vecteurs de features).")
