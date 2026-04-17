@@ -1,0 +1,322 @@
+[
+  {
+    "id": 1,
+    "nom": "Chaabane",
+    "prenom": "Rania",
+    "email": "user1@example.com",
+    "telephone": "21697310833",
+    "tag": "Inactif",
+    "tag_id": 4,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 2,
+    "nom": "boujneh",
+    "prenom": "nour",
+    "email": "user2@example.com",
+    "telephone": "21627727197",
+    "tag": "Standard",
+    "tag_id": 3,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 3,
+    "nom": "Karoui",
+    "prenom": "Fatma",
+    "email": "user3@example.com",
+    "telephone": "21697310876",
+    "tag": "Nouveau",
+    "tag_id": 5,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 4,
+    "nom": "Saidi",
+    "prenom": "Nadia",
+    "email": "user4@example.com",
+    "telephone": "21697310875",
+    "tag": "Nouveau",
+    "tag_id": 5,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 5,
+    "nom": "Jebali",
+    "prenom": "Zied",
+    "email": "user5@example.com",
+    "telephone": "21697310874",
+    "tag": "Nouveau",
+    "tag_id": 5,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 6,
+    "nom": "Bouazizi",
+    "prenom": "Tarek",
+    "email": "user6@example.com",
+    "telephone": "21697310873",
+    "tag": "Nouveau",
+    "tag_id": 5,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 7,
+    "nom": "Chaabane",
+    "prenom": "Hana",
+    "email": "user7@example.com",
+    "telephone": "21697310872",
+    "tag": "VIP",
+    "tag_id": 1,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 8,
+    "nom": "Chaabane",
+    "prenom": "Hana",
+    "email": "user8@example.com",
+    "telephone": "21697310871",
+    "tag": "VIP",
+    "tag_id": 1,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 9,
+    "nom": "Ben Ali",
+    "prenom": "Omar",
+    "email": "user9@example.com",
+    "telephone": "21697310870",
+    "tag": "Premium",
+    "tag_id": 2,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 10,
+    "nom": "Hammami",
+    "prenom": "Slim",
+    "email": "user10@example.com",
+    "telephone": "21697310869",
+    "tag": "Standard",
+    "tag_id": 3,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 11,
+    "nom": "Gharbi",
+    "prenom": "Hana",
+    "email": "user11@example.com",
+    "telephone": "21697310861",
+    "tag": "VIP",
+    "tag_id": 1,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 12,
+    "nom": "Hammami",
+    "prenom": "Ines",
+    "email": "user12@example.com",
+    "telephone": "21699319350",
+    "tag": "Inactif",
+    "tag_id": 4,
+    "groupe": "Groupe B"
+  },
+  {
+    "id": 13,
+    "nom": "Trabelsi",
+    "prenom": "Nadia",
+    "email": "user13@example.com",
+    "telephone": "21697400044",
+    "tag": "Inactif",
+    "tag_id": 4,
+    "groupe": "Groupe B"
+  },
+  {
+    "id": 14,
+    "nom": "Trabelsi",
+    "prenom": "Nadia",
+    "email": "user14@example.com",
+    "telephone": "21652470343",
+    "tag": "Inactif",
+    "tag_id": 4,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 15,
+    "nom": "Mansouri",
+    "prenom": "Hana",
+    "email": "user15@example.com",
+    "telephone": "21697384130",
+    "tag": "Nouveau",
+    "tag_id": 5,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 60,
+    "nom": "Amiri",
+    "prenom": "Senda",
+    "email": "senda15@example.com",
+    "telephone": "21627727193",
+    "tag": "Nouveau",
+    "tag_id": 5,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 16,
+    "nom": "Mansouri",
+    "prenom": "Nadia",
+    "email": "user16@example.com",
+    "telephone": "21625147258",
+    "tag": "Nouveau",
+    "tag_id": 5,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 17,
+    "nom": "Hammami",
+    "prenom": "Slim",
+    "email": "user17@example.com",
+    "telephone": "21697320863",
+    "tag": "VIP",
+    "tag_id": 1,
+    "groupe": "Groupe B"
+  },
+  {
+    "id": 18,
+    "nom": "Karoui",
+    "prenom": "Tarek",
+    "email": "user18@example.com",
+    "telephone": "21697341152",
+    "tag": "Inactif",
+    "tag_id": 4,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 19,
+    "nom": "Ben Ali",
+    "prenom": "Sami",
+    "email": "user19@example.com",
+    "telephone": "21697320867",
+    "tag": "Standard",
+    "tag_id": 3,
+    "groupe": "Groupe B"
+  },
+  {
+    "id": 20,
+    "nom": "Ben Ali",
+    "prenom": "Hana",
+    "email": "user20@example.com",
+    "telephone": "21625369369",
+    "tag": "Nouveau",
+    "tag_id": 5,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 21,
+    "nom": "Chaabane",
+    "prenom": "Sami",
+    "email": "user21@example.com",
+    "telephone": "33123654789",
+    "tag": "Nouveau",
+    "tag_id": 5,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 1,
+    "nom": "mahdhi",
+    "prenom": "amal",
+    "email": "amal@example.com",
+    "telephone": "21625101801",
+    "tag": "Nouveau",
+    "tag_id": 5,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 22,
+    "nom": "Rekik",
+    "prenom": "Youssef",
+    "email": "user22@example.com",
+    "telephone": "33253693696",
+    "tag": "Premium",
+    "tag_id": 2,
+    "groupe": "Groupe B"
+  },
+  {
+    "id": 23,
+    "nom": "Bouazizi",
+    "prenom": "Omar",
+    "email": "user23@example.com",
+    "telephone": "33656565656",
+    "tag": "Standard",
+    "tag_id": 3,
+    "groupe": "Groupe B"
+  },
+  {
+    "id": 24,
+    "nom": "Saidi",
+    "prenom": "Zied",
+    "email": "user24@example.com",
+    "telephone": "21622937398",
+    "tag": "Premium",
+    "tag_id": 2,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 25,
+    "nom": "Chaabane",
+    "prenom": "Leila",
+    "email": "user25@example.com",
+    "telephone": "21623163814",
+    "tag": "Standard",
+    "tag_id": 3,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 26,
+    "nom": "Karoui",
+    "prenom": "Leila",
+    "email": "user26@example.com",
+    "telephone": "21624758450",
+    "tag": "Standard",
+    "tag_id": 3,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 27,
+    "nom": "Saidi",
+    "prenom": "Omar",
+    "email": "user27@example.com",
+    "telephone": "21622924756",
+    "tag": "Inactif",
+    "tag_id": 4,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 28,
+    "nom": "Ben Ali",
+    "prenom": "Nadia",
+    "email": "user28@example.com",
+    "telephone": "21698765432",
+    "tag": "Nouveau",
+    "tag_id": 5,
+    "groupe": "Groupe A"
+  },
+  {
+    "id": 29,
+    "nom": "Ben Ali",
+    "prenom": "Fatma",
+    "email": "user29@example.com",
+    "telephone": "21697403695",
+    "tag": "Premium",
+    "tag_id": 2,
+    "groupe": "Groupe B"
+  },
+  {
+    "id": 30,
+    "nom": "Gharbi",
+    "prenom": "Leila",
+    "email": "user30@example.com",
+    "telephone": "21697372525",
+    "tag": "Standard",
+    "tag_id": 3,
+    "groupe": "Groupe B"
+  }
+]

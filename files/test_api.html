@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EasyBulk — Filtrage Intelligent</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f4f6fa; --white:#ffffff; --border:#e2e8f0;
+  --text:#1a202c; --muted:#718096; --light: #f7fcfa;
+  --blue:#2563eb; --blue-light:#eff6ff; --blue-dark:#1d4ed8;
+  --green:#16a34a; --green-light:#f0fdf4;
+  --orange:#d97706; --orange-light:#fffbeb;
+  --red:#dc2626; --red-light:#fef2f2;
+  --gray:#64748b; --gray-light:#f1f5f9;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.1);
+  --radius:10px; --radius-sm:6px;
+  --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.5}
+
+/* ── Layout */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:.75rem 2rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
+.logo{font-weight:700;font-size:1.1rem;color:var(--blue);letter-spacing:-.5px}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:.75rem}
+.api-status{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--muted);background:var(--gray-light);padding:.3rem .7rem;border-radius:100px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.dot.on{background:#22c55e;box-shadow:0 0 6px #22c55e88;animation:pulse 2s infinite}
+.dot.off{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.page{max-width:1100px;margin:0 auto;padding:1.5rem 1.5rem 3rem}
+
+/* ── Card */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:1.25rem;overflow:hidden}
+.card-header{padding:.9rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--white)}
+.card-title{font-weight:600;font-size:.95rem;color:var(--text)}
+.card-body{padding:1.25rem}
+
+/* ── Section title */
+.section-title{font-size:1.1rem;font-weight:700;margin-bottom:.3rem}
+.section-sub{color:var(--muted);font-size:.85rem;margin-bottom:1.25rem}
+
+/* ── Tags input */
+.tags-wrap{border:2px solid var(--blue);border-radius:var(--radius-sm);background:var(--white);padding:.4rem .6rem;display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;cursor:text;min-height:42px}
+.tags-wrap:focus-within{border-color:var(--blue-dark);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.tag-chip{display:inline-flex;align-items:center;gap:.3rem;background:var(--blue);color:white;border-radius:4px;padding:.15rem .5rem;font-size:.8rem;font-weight:500}
+.tag-chip .rm{cursor:pointer;opacity:.7;font-size:.9rem;line-height:1}
+.tag-chip .rm:hover{opacity:1}
+.tag-input{border:none;outline:none;font-family:inherit;font-size:.88rem;flex:1;min-width:80px;color:var(--text)}
+.tag-hint{font-size:.78rem;color:var(--muted);margin-top:.35rem}
+
+/* ── Tag dropdown */
+.tag-dropdown{position:absolute;z-index:50;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:var(--shadow-md);width:220px;overflow:hidden;display:none}
+.tag-dropdown.open{display:block}
+.tag-opt{padding:.55rem .9rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:.88rem;transition:background .1s}
+.tag-opt:hover{background:var(--blue-light)}
+.tag-opt .cnt{background:var(--gray-light);color:var(--muted);border-radius:100px;padding:.1rem .45rem;font-size:.75rem;font-weight:600}
+.tag-opt:hover .cnt{background:var(--blue);color:white}
+
+/* ── Contacts search */
+.search-box{position:relative}
+.search-box input{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem .9rem .55rem 2.2rem;font-size:.88rem;outline:none;transition:border .2s;font-family:inherit;background:var(--white)}
+.search-box input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.search-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem}
+
+/* ── Groupe select */
+.sel-wrap{position:relative}
+.sel-wrap select{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem .9rem;font-size:.88rem;outline:none;font-family:inherit;background:var(--white);appearance:none;cursor:pointer;transition:border .2s}
+.sel-wrap select:focus{border-color:var(--blue)}
+.sel-wrap::after{content:'▾';position:absolute;right:.75rem;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:.75rem}
+
+/* ── Stats row */
+.stats-row{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}
+.stat-pill{display:flex;align-items:center;gap:.5rem;padding:.45rem .85rem;border-radius:100px;font-size:.82rem;font-weight:500;border:1px solid}
+.stat-pill.blue{background:var(--blue-light);color:var(--blue-dark);border-color:#bfdbfe}
+.stat-pill.green{background:var(--green-light);color:var(--green);border-color:#bbf7d0}
+.stat-pill.orange{background:var(--orange-light);color:var(--orange);border-color:#fde68a}
+.stat-pill.gray{background:var(--gray-light);color:var(--gray);border-color:var(--border)}
+.stat-pill .val{font-weight:700;font-size:.95rem}
+
+/* ── Table */
+.tbl-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+thead{background:var(--gray-light)}
+th{padding:.65rem .9rem;text-align:left;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);white-space:nowrap;border-bottom:1px solid var(--border)}
+td{padding:.7rem .9rem;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr.selected td{background:#eff6ff}
+tbody tr:hover td{background:var(--light)}
+
+/* ── Checkbox */
+input[type=checkbox]{width:15px;height:15px;accent-color:var(--blue);cursor:pointer}
+
+/* ── Phone cell */
+.phone{font-family:var(--mono);font-size:.8rem;color:var(--blue-dark);letter-spacing:.5px}
+
+/* ── Result badge in table */
+.rbadge{display:inline-flex;align-items:center;gap:.3rem;padding:.18rem .55rem;border-radius:100px;font-size:.75rem;font-weight:600;white-space:nowrap}
+.rbadge.av{background:var(--green-light);color:var(--green)}
+.rbadge.su{background:var(--orange-light);color:var(--orange)}
+.rbadge.na{background:var(--red-light);color:var(--red)}
+.rbadge.new{background:var(--gray-light);color:var(--gray)}
+
+/* ── Score mini bar */
+.score-mini{display:flex;align-items:center;gap:.4rem}
+.score-bar{width:52px;height:4px;background:var(--border);border-radius:100px;overflow:hidden}
+.score-fill{height:100%;border-radius:100px;transition:width .5s ease}
+.score-num{font-family:var(--mono);font-size:.75rem;font-weight:500}
+
+/* ── Bottom stats */
+.bottom-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-top:1rem}
+.bstat{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center}
+.bstat .label{font-size:.8rem;color:var(--muted)}
+.bstat .value{font-weight:700;font-size:.95rem;padding:.2rem .5rem;border-radius:100px;font-family:var(--mono)}
+.bstat .value.blue{background:var(--blue-light);color:var(--blue-dark)}
+.bstat .value.green{background:var(--green-light);color:var(--green)}
+.bstat .value.gray{background:var(--gray-light);color:var(--gray)}
+
+/* ── Buttons */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1.1rem;border-radius:var(--radius-sm);font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;text-decoration:none}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:var(--blue);color:white}
+.btn-primary:hover:not(:disabled){background:var(--blue-dark)}
+.btn-secondary{background:var(--white);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--gray-light)}
+.btn-danger{background:var(--red-light);color:var(--red);border:1px solid #fecaca}
+.btn-danger:hover{background:#fee2e2}
+.btn-green{background:var(--green-light);color:var(--green);border:1px solid #bbf7d0}
+.btn-green:hover{background:#dcfce7}
+
+/* ── Action row */
+.action-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-top:1rem}
+.action-left{display:flex;gap:.5rem;align-items:center}
+.action-right{display:flex;gap:.5rem;align-items:center}
+
+/* ── Loader */
+.loader{display:none;text-align:center;padding:2rem;color:var(--muted)}
+.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .7rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Results section */
+#resultsSection{display:none}
+.results-header{background:linear-gradient(135deg,#1e40af,#2563eb);color:white;border-radius:var(--radius) var(--radius) 0 0;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
+.results-title{font-weight:700;font-size:1rem}
+.results-sub{opacity:.8;font-size:.8rem;margin-top:.1rem}
+.results-stats{display:flex;gap:.75rem}
+.rs{background:rgba(255,255,255,.15);border-radius:6px;padding:.35rem .65rem;text-align:center}
+.rs .rv{font-weight:700;font-size:1rem}
+.rs .rl{font-size:.7rem;opacity:.8}
+
+/* ── Filters row */
+.filter-row{display:flex;gap:.5rem;padding:.75rem 1rem;background:var(--light);border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center}
+.fchip{display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .7rem;border-radius:100px;font-size:.78rem;font-weight:500;border:1px solid var(--border);background:var(--white);cursor:pointer;transition:all .15s}
+.fchip.active{background:var(--blue);color:white;border-color:var(--blue)}
+.fchip.green.active{background:var(--green);border-color:var(--green)}
+.fchip.orange.active{background:var(--orange);border-color:var(--orange)}
+.fchip.red.active{background:var(--red);border-color:var(--red)}
+
+/* ── Empty state */
+.empty{text-align:center;padding:2.5rem;color:var(--muted);font-size:.88rem}
+.empty-icon{font-size:2rem;margin-bottom:.5rem}
+
+/* ── Toast */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#1a202c;color:white;padding:.75rem 1.2rem;border-radius:var(--radius-sm);font-size:.85rem;box-shadow:var(--shadow-md);z-index:999;transform:translateY(100px);opacity:0;transition:all .3s;display:flex;align-items:center;gap:.5rem}
+.toast.show{transform:translateY(0);opacity:1}
+
+@media(max-width:640px){.bottom-stats{grid-template-columns:1fr}.stats-row{gap:.5rem}}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <span class="logo">⚡ EasyBulk</span>
+  <span style="color:var(--muted);font-size:.85rem">/ Création Campagne / Contacts</span>
+  <div class="topbar-right">
+    <div class="api-status">
+      <span class="dot" id="sDot"></span>
+      <span id="sTxt">Vérification...</span>
+    </div>
+    <input type="text" id="apiUrl" value="http://127.0.0.1:5001"
+      style="border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;font-size:.78rem;font-family:inherit;width:160px;outline:none">
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- Contacts card -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Contacts</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-top:.15rem">Sélectionnez des tags ou saisissez un numéro de téléphone pour filtrer les contacts.</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- Tags input -->
+      <div style="margin-bottom:1rem">
+        <label style="font-weight:600;font-size:.85rem;display:block;margin-bottom:.4rem">Tags <span style="color:var(--red)">*</span></label>
+        <div style="position:relative">
+          <div class="tags-wrap" id="tagsWrap" onclick="document.getElementById('tagInput').focus()">
+            <input type="text" id="tagInput" class="tag-input" placeholder="Rechercher un tag..." autocomplete="off"
+              oninput="filterTagDropdown(this.value)" onfocus="openTagDropdown()" onblur="setTimeout(closeTagDropdown,150)">
+          </div>
+          <div class="tag-dropdown" id="tagDropdown"></div>
+        </div>
+        <div class="tag-hint" id="tagHint">Lors de la sélection d'un tag, le système affiche les contacts correspondants.</div>
+      </div>
+
+      <!-- Contact search -->
+      <div style="margin-bottom:1rem">
+        <label style="font-weight:600;font-size:.85rem;display:block;margin-bottom:.4rem">Contacts</label>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="contactSearch" placeholder="Tapez un numéro, un nom, un prénom ou un email pour trouver un contact"
+            oninput="filterContacts()" style="padding-left:2rem">
+        </div>
+      </div>
+
+      <!-- Groupe + Stats -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+        <div>
+          <label style="font-weight:600;font-size:.85rem;display:block;margin-bottom:.4rem">Groupe <span style="color:var(--red)">*</span></label>
+          <div class="sel-wrap">
+            <select id="groupeSelect" onchange="filterContacts()">
+              <option value="">Sélectionner un groupe</option>
+              <option value="Groupe A">Groupe A</option>
+              <option value="Groupe B">Groupe B</option>
+              <option value="Groupe C">Groupe C</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.5rem;justify-content:flex-end">
+          <div class="bstat">
+            <span class="label">Nombre Total de Contacts</span>
+            <span class="value blue" id="totalContacts">0</span>
+          </div>
+          <div class="bstat">
+            <span class="label">Nombre Total de Messages</span>
+            <span class="value blue" id="totalMessages">0</span>
+          </div>
+          <div class="bstat">
+            <span class="label">Budget</span>
+            <span class="value gray" id="budgetVal">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contacts table -->
+      <div class="loader" id="loaderContacts"><div class="spinner"></div>Chargement...</div>
+      <div class="tbl-wrap" id="contactsTableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="chkAll" onchange="toggleAll(this)"></th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Email</th>
+              <th>Téléphone</th>
+            </tr>
+          </thead>
+          <tbody id="contactsTbody">
+            <tr><td colspan="5" class="empty"><div class="empty-icon">👥</div>Sélectionnez un tag pour afficher les contacts</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-row">
+        <div class="action-left">
+          <span id="selCount" style="font-size:.82rem;color:var(--muted)">0 sélectionné(s)</span>
+        </div>
+        <div class="action-right">
+          <button class="btn btn-secondary" onclick="clearSelection()">🗑 Effacer</button>
+          <button class="btn btn-primary" id="btnFiltrage" onclick="runFiltrage()" disabled>
+            🔍 Filtrage Intelligent
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Results section -->
+  <div id="resultsSection">
+    <div style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow)">
+
+      <!-- Results header -->
+      <div class="results-header">
+        <div>
+          <div class="results-title">🎯 Résultats du Filtrage Intelligent</div>
+          <div class="results-sub" id="resultsSubtitle">—</div>
+        </div>
+        <div class="results-stats">
+          <div class="rs"><div class="rv" id="rTotal">0</div><div class="rl">Total</div></div>
+          <div class="rs" style="background:rgba(34,197,94,.25)"><div class="rv" id="rAvail">0</div><div class="rl">Available</div></div>
+          <div class="rs" style="background:rgba(251,146,60,.25)"><div class="rv" id="rSusp">0</div><div class="rl">Suspected</div></div>
+          <div class="rs" style="background:rgba(239,68,68,.25)"><div class="rv" id="rNA">0</div><div class="rl">NA</div></div>
+        </div>
+      </div>
+
+      <!-- Filter chips -->
+      <div class="filter-row">
+        <span style="font-size:.78rem;color:var(--muted);font-weight:500">Afficher :</span>
+        <span class="fchip active" onclick="filterResults('all',this)">Tous</span>
+        <span class="fchip green" onclick="filterResults('Available',this)">✅ Available</span>
+        <span class="fchip orange" onclick="filterResults('Suspected',this)">⚠️ Suspected</span>
+        <span class="fchip red" onclick="filterResults('NA',this)">❌ NA</span>
+        <div style="margin-left:auto;display:flex;gap:.5rem">
+          <button class="btn btn-danger btn-sm" style="font-size:.78rem;padding:.3rem .75rem" onclick="excludeNA()">Exclure NA</button>
+          <button class="btn btn-secondary" style="font-size:.78rem;padding:.3rem .75rem" onclick="excludeSuspect()">Exclure Suspected</button>
+          <button class="btn btn-green" style="font-size:.78rem;padding:.3rem .75rem" onclick="confirmSend()">✅ Confirmer envoi</button>
+        </div>
+      </div>
+
+      <!-- Results table -->
+      <div class="tbl-wrap" style="border:none;border-radius:0">
+        <table>
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Téléphone</th>
+              <th>Décision</th>
+              <th>Score</th>
+              <th>P_Available</th>
+              <th>P_Suspected</th>
+              <th>P_NA</th>
+              <th>P_NA RSF 7j</th>
+              <th>P_NA RSF 30j</th>
+            </tr>
+          </thead>
+          <tbody id="resultsTbody"></tbody>
+        </table>
+        <div class="empty" id="resultsEmpty" style="display:none">
+          <div class="empty-icon">🔍</div>Aucun contact pour ce filtre
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const BASE = () => document.getElementById('apiUrl').value.replace(/\/$/,'');
+
+let allContacts   = [];
+let filteredContacts = [];
+let selectedMsisdns  = new Set();
+let allTags       = [];
+let activeTags    = [];
+let allResults    = [];
+let currentFilter = 'all';
+
+// ── Init
+window.addEventListener('load', () => { checkHealth(); loadAllContacts(); });
+
+async function checkHealth() {
+  const dot = document.getElementById('sDot');
+  const txt = document.getElementById('sTxt');
+  try {
+    const r = await fetch(BASE()+'/api/health');
+    const d = await r.json();
+    dot.className = 'dot on';
+    const thr = d.score_thresholds || {};
+    const thrSrc    = d.thresholds_source    === 'pkg' ? '✅' : '⚠️';
+    const fusionSrc = d.fusion_params_source === 'pkg' ? '✅' : '⚠️';
+    const labelMap = d.label_map ? JSON.stringify(d.label_map) : '?';
+    txt.textContent = `API OK  v${d.model_version}  (${d.n_features_xgb || '?'} features)`;
+    // Tooltip enrichi
+    dot.title = [
+      `Version : ${d.model_version}`,
+      `Entraîné : ${d.trained_at || '?'}`,
+      `Features XGB : ${d.n_features_xgb || '?'}  |  RSF : ${d.n_features_rsf || '?'}`,
+      `label_map : ${labelMap}`,
+      `avail_threshold : ${d.avail_threshold ?? '?'}`,
+      `Seuils (${d.thresholds_source||'?'}) ${thrSrc} : available≥${thr.available||'?'}  suspected≥${thr.suspected||'?'}`,
+      `Fusion (${d.fusion_params_source||'?'}) ${fusionSrc}`,
+      `RSF scaler : ${d.rsf_scaler || '?'}`,
+      `Stale : ${d.is_stale}`,
+    ].join('\n');
+    if (d.thresholds_source !== 'pkg' || d.fusion_params_source !== 'pkg') {
+      showToast(`⚠️ Modèle : seuils ou fusion depuis valeurs par défaut — re-entraînez`);
+    }
+  } catch {
+    dot.className = 'dot off';
+    txt.textContent = 'API hors ligne';
+  }
+}
+
+async function loadAllContacts() {
+  document.getElementById('loaderContacts').style.display = 'block';
+  try {
+    const r = await fetch(BASE()+'/api/contacts');
+    const d = await r.json();
+    allContacts = d.contacts || [];
+    allTags     = d.tags     || [];
+    renderTagDropdown(allTags);
+  } catch(e) {
+    showToast('❌ Impossible de charger les contacts: '+e.message);
+  }
+  document.getElementById('loaderContacts').style.display = 'none';
+}
+
+// ── TAG SYSTEM
+function renderTagDropdown(tags) {
+  const dd = document.getElementById('tagDropdown');
+  dd.innerHTML = tags.map(t => `
+    <div class="tag-opt" onmousedown="selectTag('${t.name}')">
+      <span>${t.name}</span>
+      <span class="cnt">${t.count}</span>
+    </div>`).join('');
+}
+
+function filterTagDropdown(val) {
+  const filtered = allTags.filter(t => t.name.toLowerCase().includes(val.toLowerCase()));
+  renderTagDropdown(filtered);
+  openTagDropdown();
+}
+
+function openTagDropdown()  { document.getElementById('tagDropdown').classList.add('open'); }
+function closeTagDropdown() { document.getElementById('tagDropdown').classList.remove('open'); }
+
+function selectTag(name) {
+  if (activeTags.includes(name)) return;
+  activeTags.push(name);
+  document.getElementById('tagInput').value = '';
+  renderActiveTags();
+  filterContacts();
+  closeTagDropdown();
+}
+
+function removeTag(name) {
+  activeTags = activeTags.filter(t => t !== name);
+  renderActiveTags();
+  filterContacts();
+}
+
+function renderActiveTags() {
+  const wrap  = document.getElementById('tagsWrap');
+  const input = document.getElementById('tagInput');
+  wrap.querySelectorAll('.tag-chip').forEach(el => el.remove());
+  activeTags.forEach(tag => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.innerHTML = `${tag} <span class="rm" onclick="removeTag('${tag}')">×</span>`;
+    wrap.insertBefore(chip, input);
+  });
+}
+
+// ── FILTER CONTACTS
+function filterContacts() {
+  const search  = document.getElementById('contactSearch').value.toLowerCase().trim();
+  const groupe  = document.getElementById('groupeSelect').value;
+
+  filteredContacts = allContacts.filter(c => {
+    const matchTag    = activeTags.length === 0 || activeTags.includes(c.tag);
+    const matchGroupe = !groupe || c.groupe === groupe;
+    const matchSearch = !search ||
+      c.nom?.toLowerCase().includes(search)    ||
+      c.prenom?.toLowerCase().includes(search) ||
+      c.email?.toLowerCase().includes(search)  ||
+      c.telephone?.includes(search);
+    return matchTag && matchGroupe && matchSearch;
+  });
+
+  renderContactsTable(filteredContacts);
+  updateStats();
+}
+
+function renderContactsTable(contacts) {
+  const tbody = document.getElementById('contactsTbody');
+  if (!contacts.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty"><div class="empty-icon">👥</div>${activeTags.length ? 'Aucun contact pour ces tags' : 'Sélectionnez un tag'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = contacts.map(c => {
+    const checked = selectedMsisdns.has(c.telephone);
+    return `
+    <tr class="${checked?'selected':''}" onclick="toggleRow('${c.telephone}',this)">
+      <td onclick="event.stopPropagation()"><input type="checkbox" ${checked?'checked':''} onchange="toggleCheckbox('${c.telephone}',this)"></td>
+      <td>${c.nom||'—'}</td>
+      <td>${c.prenom||'—'}</td>
+      <td style="color:var(--muted);font-size:.8rem">${c.email||'—'}</td>
+      <td class="phone">${c.telephone}</td>
+    </tr>`;
+  }).join('');
+  updateStats();
+}
+
+function toggleRow(msisdn, tr) {
+  const chk = tr.querySelector('input[type=checkbox]');
+  if (selectedMsisdns.has(msisdn)) {
+    selectedMsisdns.delete(msisdn);
+    tr.classList.remove('selected');
+    if(chk) chk.checked = false;
+  } else {
+    selectedMsisdns.add(msisdn);
+    tr.classList.add('selected');
+    if(chk) chk.checked = true;
+  }
+  updateStats();
+}
+
+function toggleCheckbox(msisdn, chk) {
+  if (chk.checked) {
+    selectedMsisdns.add(msisdn);
+    chk.closest('tr').classList.add('selected');
+  } else {
+    selectedMsisdns.delete(msisdn);
+    chk.closest('tr').classList.remove('selected');
+  }
+  updateStats();
+}
+
+function toggleAll(chk) {
+  if (chk.checked) {
+    filteredContacts.forEach(c => selectedMsisdns.add(c.telephone));
+  } else {
+    filteredContacts.forEach(c => selectedMsisdns.delete(c.telephone));
+  }
+  renderContactsTable(filteredContacts);
+  updateStats();
+}
+
+function clearSelection() {
+  selectedMsisdns.clear();
+  renderContactsTable(filteredContacts);
+  updateStats();
+}
+
+function updateStats() {
+  const sel = selectedMsisdns.size;
+  const total = filteredContacts.length;
+  document.getElementById('selCount').textContent = `${sel} sélectionné(s) sur ${total}`;
+  document.getElementById('totalContacts').textContent = total;
+  document.getElementById('totalMessages').textContent = total;
+  document.getElementById('budgetVal').textContent = total > 0 ? total + ' SMS' : '—';
+  document.getElementById('btnFiltrage').disabled = total === 0;
+}
+
+// ── FILTRAGE INTELLIGENT (version API corrigée)
+async function runFiltrage() {
+  const msisdns = selectedMsisdns.size > 0
+    ? [...selectedMsisdns]
+    : filteredContacts.map(c => c.telephone);
+
+  if (!msisdns.length) { showToast('⚠️ Aucun contact sélectionné'); return; }
+
+  const btn = document.getElementById('btnFiltrage');
+  btn.disabled = true;
+  btn.textContent = '⏳ Analyse en cours...';
+
+  // campagne_id optionnel (peut être ignoré par l'API mais gardé pour compatibilité)
+  const campagneId = 1;
+
+  try {
+    // MODIFICATION : on envoie uniquement msisdns (et campagne_id optionnel)
+    // plus de include_suspect / include_na
+    const r = await fetch(BASE()+'/api/predict', {
+      method : 'POST',
+      headers: {'Content-Type':'application/json'},
+      body   : JSON.stringify({
+        campagne_id : campagneId,
+        msisdns     : msisdns,
+      }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || r.statusText);
+
+    // MODIFICATION : la réponse n'a plus de champ 'summary'
+    // elle contient 'total' et 'contacts'
+    const contacts = d.contacts || [];
+    const totalAnalyzed = d.total || contacts.length;
+
+    // Calculer le résumé à partir des contacts
+    const summary = {
+      total: totalAnalyzed,
+      available: contacts.filter(c => c.decision === 'Available').length,
+      suspected: contacts.filter(c => c.decision === 'Suspected').length,
+      na: contacts.filter(c => c.decision === 'NA').length,
+    };
+
+    showResults(contacts, summary, d.elapsed_ms, d.model_version);
+    showToast(`✅ Analyse terminée — ${totalAnalyzed} contacts traités`);
+  } catch(e) {
+    showToast('❌ Erreur: '+e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🔍 Filtrage Intelligent';
+  }
+}
+
+function showResults(contacts, summary, elapsedMs, modelVersion) {
+  allResults = contacts;
+  currentFilter = 'all';
+
+  document.getElementById('rTotal').textContent = summary.total;
+  document.getElementById('rAvail').textContent = summary.available;
+  document.getElementById('rSusp').textContent  = summary.suspected;
+  document.getElementById('rNA').textContent    = summary.na;
+  document.getElementById('resultsSubtitle').innerHTML =
+    `${summary.total} contacts analysés  ·  ${elapsedMs || '?'}ms  ·  model v${modelVersion || '?'}`;
+
+  document.getElementById('resultsSection').style.display = 'block';
+  document.getElementById('resultsSection').scrollIntoView({behavior:'smooth',block:'start'});
+
+  renderResultsTable(allResults);
+  // Reset filter chips
+  document.querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
+  document.querySelector('.fchip').classList.add('active');
+}
+
+function renderResultsTable(results) {
+  const tbody = document.getElementById('resultsTbody');
+  const empty = document.getElementById('resultsEmpty');
+
+  if (!results.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = results.map(r => {
+    const sc   = r.availability_score || 0;
+    const col  = r.decision==='Available' ? '#16a34a'
+               : r.decision==='Suspected'   ? '#d97706' : '#dc2626';
+    const bcls = r.decision==='Available' ? 'av'
+               : r.decision==='Suspected'   ? 'su' : 'na';
+    const ico  = r.decision==='Available' ? '✅'
+               : r.decision==='Suspected'   ? '⚠️' : '❌';
+
+    const contact = allContacts.find(c => c.telephone === r.msisdn) || {};
+
+    return `
+    <tr>
+      <td>${contact.nom||'—'}</td>
+      <td>${contact.prenom||'—'}</td>
+      <td class="phone">${r.msisdn}</td>
+      <td><span class="rbadge ${bcls}">${ico} ${r.decision}</span></td>
+      <td>
+        <div class="score-mini">
+          <div class="score-bar"><div class="score-fill" style="width:${sc}%;background:${col}"></div></div>
+          <span class="score-num" style="color:${col}">${sc}</span>
+        </div>
+      </td>
+      <td style="color:#16a34a;font-family:var(--mono);font-size:.78rem">${r['p_available_%']}%</td>
+      <td style="color:#d97706;font-family:var(--mono);font-size:.78rem">${r['p_suspect_%']}%</td>
+      <td style="color:#dc2626;font-family:var(--mono);font-size:.78rem">${r['p_na_xgb_%']}%</td>
+      <td style="color:#f97316;font-family:var(--mono);font-size:.78rem">${r['p_na_rsf_7d_%']}%</td>
+      <td style="color:#b91c1c;font-family:var(--mono);font-size:.78rem">${r['p_na_rsf_30d_%']}%</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterResults(type, el) {
+  currentFilter = type;
+  document.querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  const filtered = type === 'all' ? allResults : allResults.filter(r => r.decision === type);
+  renderResultsTable(filtered);
+}
+
+function excludeNA() {
+  allResults = allResults.filter(r => r.decision !== 'NA');
+  // Mise à jour des compteurs d'affichage
+  document.getElementById('rNA').textContent = 0;
+  document.getElementById('rTotal').textContent = allResults.length;
+  document.getElementById('rAvail').textContent = allResults.filter(r => r.decision === 'Available').length;
+  document.getElementById('rSusp').textContent = allResults.filter(r => r.decision === 'Suspected').length;
+  filterResults('all', document.querySelector('.fchip'));
+  showToast('❌ Contacts NA exclus');
+}
+
+function excludeSuspect() {
+  allResults = allResults.filter(r => r.decision !== 'Suspected');
+  document.getElementById('rSusp').textContent = 0;
+  document.getElementById('rTotal').textContent = allResults.length;
+  document.getElementById('rAvail').textContent = allResults.filter(r => r.decision === 'Available').length;
+  document.getElementById('rNA').textContent = allResults.filter(r => r.decision === 'NA').length;
+  filterResults('all', document.querySelector('.fchip'));
+  showToast('⚠️ Contacts Suspected exclus');
+}
+
+function confirmSend() {
+  const available = allResults.filter(r => r.decision === 'Available').length;
+  showToast(`✅ ${available} contacts confirmés pour l'envoi !`);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
