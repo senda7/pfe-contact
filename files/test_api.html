@@ -3,127 +3,133 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EasyBulk — Filtrage Intelligent</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Smart SMS Predictor — EasyBulk</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#f4f6fa; --white:#ffffff; --border:#e2e8f0;
-  --text:#1a202c; --muted:#718096; --light: #f7fcfa;
-  --blue:#2563eb; --blue-light:#eff6ff; --blue-dark:#1d4ed8;
-  --green:#16a34a; --green-light:#f0fdf4;
-  --orange:#d97706; --orange-light:#fffbeb;
-  --red:#dc2626; --red-light:#fef2f2;
+  --bg:#f0f2f7; --white:#ffffff; --border:#e4e8f0;
+  --text:#111827; --muted:#6b7280; --light:#f8fafc;
+  --blue:#2563eb; --blue-light:#eff6ff; --blue-dark:#1d4ed8; --blue-50:#dbeafe;
+  --green:#16a34a; --green-light:#f0fdf4; --green-50:#dcfce7;
+  --orange:#d97706; --orange-light:#fffbeb; --orange-50:#fef3c7;
+  --red:#dc2626; --red-light:#fef2f2; --red-50:#fee2e2;
+  --purple:#7c3aed; --purple-light:#f5f3ff;
   --gray:#64748b; --gray-light:#f1f5f9;
-  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
-  --shadow-md:0 4px 12px rgba(0,0,0,.1);
-  --radius:10px; --radius-sm:6px;
-  --mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,.10);
+  --shadow-lg:0 10px 40px rgba(0,0,0,.12);
+  --radius:12px; --radius-sm:8px; --radius-xs:6px;
+  --mono:'DM Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;line-height:1.5}
-
-/* ── Layout */
-.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:.75rem 2rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
-.logo{font-weight:700;font-size:1.1rem;color:var(--blue);letter-spacing:-.5px}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:.75rem}
-.api-status{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--muted);background:var(--gray-light);padding:.3rem .7rem;border-radius:100px}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.5}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:.65rem 2rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:200;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.logo{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:1rem;color:var(--text);letter-spacing:-.4px}
+.logo-icon{width:28px;height:28px;background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:7px;display:flex;align-items:center;justify-content:center;color:white;font-size:.85rem}
+.logo-sub{font-size:.72rem;color:var(--muted);font-weight:400}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:.65rem}
+.api-status{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--muted);background:var(--gray-light);padding:.28rem .65rem;border-radius:100px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0}
 .dot.on{background:#22c55e;box-shadow:0 0 6px #22c55e88;animation:pulse 2s infinite}
 .dot.off{background:var(--red)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-
-.page{max-width:1100px;margin:0 auto;padding:1.5rem 1.5rem 3rem}
-
-/* ── Card */
+.api-input{border:1px solid var(--border);border-radius:var(--radius-xs);padding:.28rem .6rem;font-size:.75rem;font-family:inherit;width:155px;outline:none;color:var(--text)}
+.api-input:focus{border-color:var(--blue)}
+.page{max-width:1200px;margin:0 auto;padding:1.5rem 1.5rem 3rem}
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.85rem;margin-bottom:1.25rem}
+.kpi-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s}
+.kpi-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0}
+.kpi-card.c-blue::before{background:var(--blue)}
+.kpi-card.c-green::before{background:var(--green)}
+.kpi-card.c-orange::before{background:var(--orange)}
+.kpi-card.c-red::before{background:var(--red)}
+.kpi-card.c-purple::before{background:var(--purple)}
+.kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.65rem}
+.kpi-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.kpi-icon.i-blue{background:var(--blue-light);color:var(--blue)}
+.kpi-icon.i-green{background:var(--green-light);color:var(--green)}
+.kpi-icon.i-orange{background:var(--orange-light);color:var(--orange)}
+.kpi-icon.i-red{background:var(--red-light);color:var(--red)}
+.kpi-icon.i-purple{background:var(--purple-light);color:var(--purple)}
+.kpi-badge{font-size:.7rem;font-weight:600;padding:.16rem .48rem;border-radius:100px}
+.kpi-badge.b-total{background:var(--blue-50);color:var(--blue-dark)}
+.kpi-badge.b-eco{background:var(--purple-light);color:var(--purple)}
+.kpi-label{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:.25rem}
+.kpi-value{font-size:1.5rem;font-weight:700;color:var(--text);letter-spacing:-.5px;line-height:1.1}
+.kpi-pct{font-size:.82rem;font-weight:700}
+.kpi-sub{font-size:.7rem;color:var(--muted);margin-top:.2rem}
+.kpi-bar{height:3px;background:var(--border);border-radius:100px;margin-top:.75rem;overflow:hidden}
+.kpi-bar-fill{height:100%;border-radius:100px;transition:width 1.2s ease}
+.kpi-bar-fill.f-green{background:var(--green)}
+.kpi-bar-fill.f-orange{background:var(--orange)}
+.kpi-bar-fill.f-red{background:var(--red)}
+.distrib-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;box-shadow:var(--shadow)}
+.distrib-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem}
+.distrib-title{font-weight:600;font-size:.88rem}
+.distrib-legend{display:flex;gap:1rem}
+.legend-item{display:flex;align-items:center;gap:.35rem;font-size:.75rem;color:var(--muted)}
+.legend-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.distrib-bar-wrap{height:10px;background:var(--border);border-radius:100px;overflow:hidden;display:flex;gap:1px}
+.distrib-seg{height:100%;transition:width 1.2s ease;min-width:0}
+.distrib-seg.s-av{background:var(--green)}
+.distrib-seg.s-su{background:var(--orange)}
+.distrib-seg.s-na{background:var(--red)}
+.distrib-pcts{display:flex;margin-top:.4rem}
+.distrib-pct-label{transition:width 1.2s ease;text-align:center;font-size:.72rem;font-family:var(--mono);overflow:hidden;min-width:0;white-space:nowrap}
 .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:1.25rem;overflow:hidden}
-.card-header{padding:.9rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--white)}
-.card-title{font-weight:600;font-size:.95rem;color:var(--text)}
+.card-header{padding:.85rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.card-title{font-weight:600;font-size:.9rem}
 .card-body{padding:1.25rem}
-
-/* ── Section title */
-.section-title{font-size:1.1rem;font-weight:700;margin-bottom:.3rem}
-.section-sub{color:var(--muted);font-size:.85rem;margin-bottom:1.25rem}
-
-/* ── Tags input */
-.tags-wrap{border:2px solid var(--blue);border-radius:var(--radius-sm);background:var(--white);padding:.4rem .6rem;display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;cursor:text;min-height:42px}
-.tags-wrap:focus-within{border-color:var(--blue-dark);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-.tag-chip{display:inline-flex;align-items:center;gap:.3rem;background:var(--blue);color:white;border-radius:4px;padding:.15rem .5rem;font-size:.8rem;font-weight:500}
-.tag-chip .rm{cursor:pointer;opacity:.7;font-size:.9rem;line-height:1}
+.tags-wrap{border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--white);padding:.38rem .6rem;display:flex;flex-wrap:wrap;gap:.35rem;align-items:center;cursor:text;min-height:40px;transition:border .15s}
+.tags-wrap:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.tag-chip{display:inline-flex;align-items:center;gap:.3rem;background:var(--blue);color:white;border-radius:5px;padding:.14rem .48rem;font-size:.78rem;font-weight:500}
+.tag-chip .rm{cursor:pointer;opacity:.7;font-size:.85rem;line-height:1}
 .tag-chip .rm:hover{opacity:1}
-.tag-input{border:none;outline:none;font-family:inherit;font-size:.88rem;flex:1;min-width:80px;color:var(--text)}
-.tag-hint{font-size:.78rem;color:var(--muted);margin-top:.35rem}
-
-/* ── Tag dropdown */
-.tag-dropdown{position:absolute;z-index:50;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:var(--shadow-md);width:220px;overflow:hidden;display:none}
+.tag-input{border:none;outline:none;font-family:inherit;font-size:.85rem;flex:1;min-width:80px;color:var(--text);background:transparent}
+.tag-hint{font-size:.73rem;color:var(--muted);margin-top:.3rem}
+.tag-dropdown{position:absolute;z-index:50;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:var(--shadow-md);width:230px;display:none;max-height:210px;overflow-y:auto}
 .tag-dropdown.open{display:block}
-.tag-opt{padding:.55rem .9rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:.88rem;transition:background .1s}
+.tag-opt{padding:.48rem .9rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:.84rem;transition:background .1s}
 .tag-opt:hover{background:var(--blue-light)}
-.tag-opt .cnt{background:var(--gray-light);color:var(--muted);border-radius:100px;padding:.1rem .45rem;font-size:.75rem;font-weight:600}
+.tag-opt .cnt{background:var(--gray-light);color:var(--muted);border-radius:100px;padding:.1rem .42rem;font-size:.7rem;font-weight:600}
 .tag-opt:hover .cnt{background:var(--blue);color:white}
-
-/* ── Contacts search */
 .search-box{position:relative}
-.search-box input{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem .9rem .55rem 2.2rem;font-size:.88rem;outline:none;transition:border .2s;font-family:inherit;background:var(--white)}
-.search-box input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
-.search-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem}
-
-/* ── Groupe select */
+.search-box input{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.48rem .9rem .48rem 2.1rem;font-size:.85rem;outline:none;transition:border .15s;font-family:inherit}
+.search-box input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.07)}
+.search-icon{position:absolute;left:.65rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;pointer-events:none}
 .sel-wrap{position:relative}
-.sel-wrap select{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem .9rem;font-size:.88rem;outline:none;font-family:inherit;background:var(--white);appearance:none;cursor:pointer;transition:border .2s}
+.sel-wrap select{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.48rem .9rem;font-size:.85rem;outline:none;font-family:inherit;background:var(--white);appearance:none;cursor:pointer;transition:border .15s;color:var(--text)}
 .sel-wrap select:focus{border-color:var(--blue)}
-.sel-wrap::after{content:'▾';position:absolute;right:.75rem;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:.75rem}
-
-/* ── Stats row */
-.stats-row{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}
-.stat-pill{display:flex;align-items:center;gap:.5rem;padding:.45rem .85rem;border-radius:100px;font-size:.82rem;font-weight:500;border:1px solid}
-.stat-pill.blue{background:var(--blue-light);color:var(--blue-dark);border-color:#bfdbfe}
-.stat-pill.green{background:var(--green-light);color:var(--green);border-color:#bbf7d0}
-.stat-pill.orange{background:var(--orange-light);color:var(--orange);border-color:#fde68a}
-.stat-pill.gray{background:var(--gray-light);color:var(--gray);border-color:var(--border)}
-.stat-pill .val{font-weight:700;font-size:.95rem}
-
-/* ── Table */
+.sel-wrap::after{content:'▾';position:absolute;right:.75rem;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:.7rem}
+.summary-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.55rem}
+.bstat{background:var(--light);border:1px solid var(--border);border-radius:var(--radius-xs);padding:.6rem .85rem;display:flex;justify-content:space-between;align-items:center}
+.bstat .blabel{font-size:.73rem;color:var(--muted)}
+.bstat .bvalue{font-weight:700;font-size:.85rem;padding:.16rem .48rem;border-radius:100px;font-family:var(--mono)}
+.bstat .bvalue.v-blue{background:var(--blue-light);color:var(--blue-dark)}
+.bstat .bvalue.v-gray{background:var(--gray-light);color:var(--gray)}
 .tbl-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border)}
-table{width:100%;border-collapse:collapse;font-size:.85rem}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
 thead{background:var(--gray-light)}
-th{padding:.65rem .9rem;text-align:left;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);white-space:nowrap;border-bottom:1px solid var(--border)}
-td{padding:.7rem .9rem;border-bottom:1px solid var(--border);vertical-align:middle}
+th{padding:.6rem .85rem;text-align:left;font-weight:600;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);white-space:nowrap;border-bottom:1px solid var(--border)}
+td{padding:.62rem .85rem;border-bottom:1px solid var(--border);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr.selected td{background:#eff6ff}
+tr.selected td{background:var(--blue-50)}
 tbody tr:hover td{background:var(--light)}
-
-/* ── Checkbox */
-input[type=checkbox]{width:15px;height:15px;accent-color:var(--blue);cursor:pointer}
-
-/* ── Phone cell */
-.phone{font-family:var(--mono);font-size:.8rem;color:var(--blue-dark);letter-spacing:.5px}
-
-/* ── Result badge in table */
-.rbadge{display:inline-flex;align-items:center;gap:.3rem;padding:.18rem .55rem;border-radius:100px;font-size:.75rem;font-weight:600;white-space:nowrap}
+input[type=checkbox]{width:14px;height:14px;accent-color:var(--blue);cursor:pointer}
+.phone{font-family:var(--mono);font-size:.77rem;color:var(--blue-dark);letter-spacing:.3px}
+.rbadge{display:inline-flex;align-items:center;gap:.25rem;padding:.18rem .52rem;border-radius:100px;font-size:.7rem;font-weight:600;white-space:nowrap}
 .rbadge.av{background:var(--green-light);color:var(--green)}
 .rbadge.su{background:var(--orange-light);color:var(--orange)}
 .rbadge.na{background:var(--red-light);color:var(--red)}
-.rbadge.new{background:var(--gray-light);color:var(--gray)}
-
-/* ── Score mini bar */
 .score-mini{display:flex;align-items:center;gap:.4rem}
-.score-bar{width:52px;height:4px;background:var(--border);border-radius:100px;overflow:hidden}
-.score-fill{height:100%;border-radius:100px;transition:width .5s ease}
-.score-num{font-family:var(--mono);font-size:.75rem;font-weight:500}
-
-/* ── Bottom stats */
-.bottom-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-top:1rem}
-.bstat{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center}
-.bstat .label{font-size:.8rem;color:var(--muted)}
-.bstat .value{font-weight:700;font-size:.95rem;padding:.2rem .5rem;border-radius:100px;font-family:var(--mono)}
-.bstat .value.blue{background:var(--blue-light);color:var(--blue-dark)}
-.bstat .value.green{background:var(--green-light);color:var(--green)}
-.bstat .value.gray{background:var(--gray-light);color:var(--gray)}
-
-/* ── Buttons */
-.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1.1rem;border-radius:var(--radius-sm);font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;text-decoration:none}
+.score-bar{width:46px;height:4px;background:var(--border);border-radius:100px;overflow:hidden;flex-shrink:0}
+.score-fill{height:100%;border-radius:100px;transition:width .7s ease}
+.score-num{font-family:var(--mono);font-size:.7rem;font-weight:500;min-width:26px}
+.pct-cell{font-family:var(--mono);font-size:.76rem;font-weight:500}
+.btn{display:inline-flex;align-items:center;gap:.35rem;padding:.48rem 1rem;border-radius:var(--radius-sm);font-family:inherit;font-size:.82rem;font-weight:600;cursor:pointer;border:none;transition:all .15s}
 .btn:active{transform:scale(.98)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
 .btn-primary{background:var(--blue);color:white}
 .btn-primary:hover:not(:disabled){background:var(--blue-dark)}
 .btn-secondary{background:var(--white);color:var(--text);border:1px solid var(--border)}
@@ -132,77 +138,81 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--blue);cursor:poin
 .btn-danger:hover{background:#fee2e2}
 .btn-green{background:var(--green-light);color:var(--green);border:1px solid #bbf7d0}
 .btn-green:hover{background:#dcfce7}
-
-/* ── Action row */
+.btn-sm{font-size:.75rem;padding:.3rem .7rem}
 .action-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-top:1rem}
-.action-left{display:flex;gap:.5rem;align-items:center}
-.action-right{display:flex;gap:.5rem;align-items:center}
-
-/* ── Loader */
 .loader{display:none;text-align:center;padding:2rem;color:var(--muted)}
-.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .7rem}
+.spinner{width:24px;height:24px;border:2.5px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .6rem}
+.spinner-inline{width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── Results section */
 #resultsSection{display:none}
-.results-header{background:linear-gradient(135deg,#1e40af,#2563eb);color:white;border-radius:var(--radius) var(--radius) 0 0;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
-.results-title{font-weight:700;font-size:1rem}
-.results-sub{opacity:.8;font-size:.8rem;margin-top:.1rem}
-.results-stats{display:flex;gap:.75rem}
-.rs{background:rgba(255,255,255,.15);border-radius:6px;padding:.35rem .65rem;text-align:center}
-.rs .rv{font-weight:700;font-size:1rem}
-.rs .rl{font-size:.7rem;opacity:.8}
-
-/* ── Filters row */
-.filter-row{display:flex;gap:.5rem;padding:.75rem 1rem;background:var(--light);border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center}
-.fchip{display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .7rem;border-radius:100px;font-size:.78rem;font-weight:500;border:1px solid var(--border);background:var(--white);cursor:pointer;transition:all .15s}
+.results-header{background:linear-gradient(135deg,#1e40af 0%,#2563eb 60%,#3b82f6 100%);color:white;border-radius:var(--radius) var(--radius) 0 0;padding:1.1rem 1.25rem}
+.results-title{font-weight:700;font-size:.95rem}
+.results-sub{opacity:.8;font-size:.73rem;margin-top:.15rem}
+.filter-row{display:flex;gap:.4rem;padding:.65rem 1rem;background:var(--light);border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center}
+.fchip{display:inline-flex;align-items:center;gap:.28rem;padding:.26rem .62rem;border-radius:100px;font-size:.73rem;font-weight:500;border:1px solid var(--border);background:var(--white);cursor:pointer;transition:all .15s;user-select:none}
+.fchip:hover:not(.active){background:var(--gray-light)}
 .fchip.active{background:var(--blue);color:white;border-color:var(--blue)}
-.fchip.green.active{background:var(--green);border-color:var(--green)}
-.fchip.orange.active{background:var(--orange);border-color:var(--orange)}
-.fchip.red.active{background:var(--red);border-color:var(--red)}
-
-/* ── Empty state */
-.empty{text-align:center;padding:2.5rem;color:var(--muted);font-size:.88rem}
-.empty-icon{font-size:2rem;margin-bottom:.5rem}
-
-/* ── Toast */
-.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#1a202c;color:white;padding:.75rem 1.2rem;border-radius:var(--radius-sm);font-size:.85rem;box-shadow:var(--shadow-md);z-index:999;transform:translateY(100px);opacity:0;transition:all .3s;display:flex;align-items:center;gap:.5rem}
+.fchip.fc-green.active{background:var(--green);border-color:var(--green);color:white}
+.fchip.fc-orange.active{background:var(--orange);border-color:var(--orange);color:white}
+.fchip.fc-red.active{background:var(--red);border-color:var(--red);color:white}
+.empty{text-align:center;padding:2.5rem;color:var(--muted);font-size:.84rem}
+.empty-icon{font-size:1.8rem;margin-bottom:.4rem}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#111827;color:white;padding:.68rem 1.1rem;border-radius:var(--radius-sm);font-size:.82rem;box-shadow:var(--shadow-lg);z-index:9999;transform:translateY(110px);opacity:0;transition:all .3s;max-width:380px}
 .toast.show{transform:translateY(0);opacity:1}
 
-@media(max-width:640px){.bottom-stats{grid-template-columns:1fr}.stats-row{gap:.5rem}}
+/* Modal confirm */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--white);border-radius:var(--radius);padding:1.5rem;width:420px;max-width:90vw;box-shadow:var(--shadow-lg);transform:translateY(20px);transition:transform .2s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-title{font-weight:700;font-size:1rem;margin-bottom:.5rem}
+.modal-body{font-size:.85rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.6}
+.modal-body strong{color:var(--text)}
+.modal-footer{display:flex;gap:.5rem;justify-content:flex-end}
+.badge-count{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:100px;font-size:.8rem;font-weight:600;margin:.15rem .1rem}
+.badge-av{background:var(--green-light);color:var(--green)}
+.badge-su{background:var(--orange-light);color:var(--orange)}
+.badge-na{background:var(--red-light);color:var(--red)}
+.badge-all{background:var(--blue-light);color:var(--blue-dark)}
+
+label{font-weight:600;font-size:.82rem;display:block;margin-bottom:.32rem;color:var(--text)}
+.req{color:var(--red)}
+@media(max-width:950px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.kpi-grid{grid-template-columns:1fr 1fr};.summary-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- Topbar -->
 <div class="topbar">
-  <span class="logo">⚡ EasyBulk</span>
-  <span style="color:var(--muted);font-size:.85rem">/ Création Campagne / Contacts</span>
+  <div class="logo">
+    <div class="logo-icon">💬</div>
+    <div>
+      <div>Smart SMS Predictor</div>
+      <div class="logo-sub">XGBoost · RSF · EasyBulk</div>
+    </div>
+  </div>
   <div class="topbar-right">
     <div class="api-status">
       <span class="dot" id="sDot"></span>
       <span id="sTxt">Vérification...</span>
     </div>
-    <input type="text" id="apiUrl" value="http://127.0.0.1:5001"
-      style="border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;font-size:.78rem;font-family:inherit;width:160px;outline:none">
+    <input type="text" id="apiUrl" value="http://127.0.0.1:5001" class="api-input" onchange="checkHealth()">
   </div>
 </div>
 
 <div class="page">
 
-  <!-- Contacts card -->
+  <!-- CONTACTS -->
   <div class="card">
     <div class="card-header">
       <div>
         <div class="card-title">Contacts</div>
-        <div style="font-size:.78rem;color:var(--muted);margin-top:.15rem">Sélectionnez des tags ou saisissez un numéro de téléphone pour filtrer les contacts.</div>
+        <div style="font-size:.73rem;color:var(--muted);margin-top:.1rem">Sélectionnez des tags ou saisissez un numéro pour filtrer les contacts.</div>
       </div>
     </div>
     <div class="card-body">
-
-      <!-- Tags input -->
       <div style="margin-bottom:1rem">
-        <label style="font-weight:600;font-size:.85rem;display:block;margin-bottom:.4rem">Tags <span style="color:var(--red)">*</span></label>
+        <label>Tags <span class="req">*</span></label>
         <div style="position:relative">
           <div class="tags-wrap" id="tagsWrap" onclick="document.getElementById('tagInput').focus()">
             <input type="text" id="tagInput" class="tag-input" placeholder="Rechercher un tag..." autocomplete="off"
@@ -210,59 +220,42 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--blue);cursor:poin
           </div>
           <div class="tag-dropdown" id="tagDropdown"></div>
         </div>
-        <div class="tag-hint" id="tagHint">Lors de la sélection d'un tag, le système affiche les contacts correspondants.</div>
+        <div class="tag-hint">Lors de la sélection d'un tag, le système affiche les contacts correspondants.</div>
       </div>
-
-      <!-- Contact search -->
       <div style="margin-bottom:1rem">
-        <label style="font-weight:600;font-size:.85rem;display:block;margin-bottom:.4rem">Contacts</label>
+        <label>Contacts</label>
         <div class="search-box">
           <span class="search-icon">🔍</span>
-          <input type="text" id="contactSearch" placeholder="Tapez un numéro, un nom, un prénom ou un email pour trouver un contact"
-            oninput="filterContacts()" style="padding-left:2rem">
+          <input type="text" id="contactSearch" placeholder="Tapez un numéro, un nom, un prénom ou un email..." oninput="filterContacts()" style="padding-left:2rem">
         </div>
       </div>
-
-      <!-- Groupe + Stats -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
         <div>
-          <label style="font-weight:600;font-size:.85rem;display:block;margin-bottom:.4rem">Groupe <span style="color:var(--red)">*</span></label>
+          <label>Groupe <span class="req">*</span></label>
           <div class="sel-wrap">
             <select id="groupeSelect" onchange="filterContacts()">
-              <option value="">Sélectionner un groupe</option>
+              <option value="">Tous les groupes</option>
               <option value="Groupe A">Groupe A</option>
               <option value="Groupe B">Groupe B</option>
               <option value="Groupe C">Groupe C</option>
             </select>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:.5rem;justify-content:flex-end">
-          <div class="bstat">
-            <span class="label">Nombre Total de Contacts</span>
-            <span class="value blue" id="totalContacts">0</span>
-          </div>
-          <div class="bstat">
-            <span class="label">Nombre Total de Messages</span>
-            <span class="value blue" id="totalMessages">0</span>
-          </div>
-          <div class="bstat">
-            <span class="label">Budget</span>
-            <span class="value gray" id="budgetVal">—</span>
+        <div>
+          <div class="summary-row">
+            <div class="bstat"><span class="blabel">Total contacts</span><span class="bvalue v-blue" id="totalContacts">0</span></div>
+            <div class="bstat"><span class="blabel">Total messages</span><span class="bvalue v-blue" id="totalMessages">0</span></div>
+            <div class="bstat"><span class="blabel">Budget</span><span class="bvalue v-gray" id="budgetVal">—</span></div>
           </div>
         </div>
       </div>
-
-      <!-- Contacts table -->
       <div class="loader" id="loaderContacts"><div class="spinner"></div>Chargement...</div>
-      <div class="tbl-wrap" id="contactsTableWrap">
+      <div class="tbl-wrap">
         <table>
           <thead>
             <tr>
               <th><input type="checkbox" id="chkAll" onchange="toggleAll(this)"></th>
-              <th>Nom</th>
-              <th>Prénom</th>
-              <th>Email</th>
-              <th>Téléphone</th>
+              <th>Nom</th><th>Prénom</th><th>Email</th><th>Téléphone</th>
             </tr>
           </thead>
           <tbody id="contactsTbody">
@@ -270,77 +263,111 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--blue);cursor:poin
           </tbody>
         </table>
       </div>
-
-      <!-- Action buttons -->
       <div class="action-row">
-        <div class="action-left">
-          <span id="selCount" style="font-size:.82rem;color:var(--muted)">0 sélectionné(s)</span>
-        </div>
-        <div class="action-right">
+        <span id="selCount" style="font-size:.8rem;color:var(--muted)">0 sélectionné(s)</span>
+        <div style="display:flex;gap:.5rem">
           <button class="btn btn-secondary" onclick="clearSelection()">🗑 Effacer</button>
-          <button class="btn btn-primary" id="btnFiltrage" onclick="runFiltrage()" disabled>
-            🔍 Filtrage Intelligent
-          </button>
+          <button class="btn btn-primary" id="btnFiltrage" onclick="runFiltrage()" disabled>🔍 Filtrage Intelligent</button>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- Results section -->
+  <!-- RÉSULTATS -->
   <div id="resultsSection">
     <div style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow)">
 
-      <!-- Results header -->
+      <!-- Header bleu -->
       <div class="results-header">
-        <div>
-          <div class="results-title">🎯 Résultats du Filtrage Intelligent</div>
-          <div class="results-sub" id="resultsSubtitle">—</div>
+        <div class="results-title">🎯 Résultats du Filtrage Intelligent</div>
+        <div class="results-sub" id="resultsSubtitle">—</div>
+      </div>
+
+      <!-- Dashboard KPI -->
+      <div id="dashboardSection" style="padding:1.25rem 1.25rem 0;background:var(--bg)">
+        <div class="kpi-grid">
+          <div class="kpi-card c-blue">
+            <div class="kpi-top"><div class="kpi-icon i-blue">👥</div><span class="kpi-badge b-total">Total</span></div>
+            <div class="kpi-label">Contacts analysés</div>
+            <div class="kpi-value" id="kpiTotal">—</div>
+            <div class="kpi-sub" id="kpiTotalSub">contacts uniques</div>
+          </div>
+          <div class="kpi-card c-green">
+            <div class="kpi-top"><div class="kpi-icon i-green">✅</div><span class="kpi-pct" style="color:var(--green)" id="kpiAvailPct">—%</span></div>
+            <div class="kpi-label">Available</div>
+            <div class="kpi-value" id="kpiAvail">—</div>
+            <div class="kpi-sub">joignables avec confiance</div>
+            <div class="kpi-bar"><div class="kpi-bar-fill f-green" id="kpiAvailBar" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card c-orange">
+            <div class="kpi-top"><div class="kpi-icon i-orange">⚠️</div><span class="kpi-pct" style="color:var(--orange)" id="kpiSuspPct">—%</span></div>
+            <div class="kpi-label">Suspected</div>
+            <div class="kpi-value" id="kpiSusp">—</div>
+            <div class="kpi-sub">comportement irrégulier</div>
+            <div class="kpi-bar"><div class="kpi-bar-fill f-orange" id="kpiSuspBar" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card c-red">
+            <div class="kpi-top"><div class="kpi-icon i-red">❌</div><span class="kpi-pct" style="color:var(--red)" id="kpiNaPct">—%</span></div>
+            <div class="kpi-label">NA (Injoignables)</div>
+            <div class="kpi-value" id="kpiNA">—</div>
+            <div class="kpi-sub">perte budget certaine</div>
+            <div class="kpi-bar"><div class="kpi-bar-fill f-red" id="kpiNABar" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card c-purple">
+            <div class="kpi-top"><div class="kpi-icon i-purple">💰</div><span class="kpi-badge b-eco">Économie</span></div>
+            <div class="kpi-label">Budget économisé</div>
+            <div class="kpi-value" id="kpiBudget">—</div>
+            <div class="kpi-sub">en excluant NA + Suspected</div>
+          </div>
         </div>
-        <div class="results-stats">
-          <div class="rs"><div class="rv" id="rTotal">0</div><div class="rl">Total</div></div>
-          <div class="rs" style="background:rgba(34,197,94,.25)"><div class="rv" id="rAvail">0</div><div class="rl">Available</div></div>
-          <div class="rs" style="background:rgba(251,146,60,.25)"><div class="rv" id="rSusp">0</div><div class="rl">Suspected</div></div>
-          <div class="rs" style="background:rgba(239,68,68,.25)"><div class="rv" id="rNA">0</div><div class="rl">NA</div></div>
+        <div class="distrib-card" style="margin-bottom:1.25rem">
+          <div class="distrib-header">
+            <span class="distrib-title">Répartition des contacts</span>
+            <div class="distrib-legend">
+              <span class="legend-item"><span class="legend-dot" style="background:var(--green)"></span>Available</span>
+              <span class="legend-item"><span class="legend-dot" style="background:var(--orange)"></span>Suspected</span>
+              <span class="legend-item"><span class="legend-dot" style="background:var(--red)"></span>NA</span>
+            </div>
+          </div>
+          <div class="distrib-bar-wrap">
+            <div class="distrib-seg s-av" id="dSegAv" style="width:0%"></div>
+            <div class="distrib-seg s-su" id="dSegSu" style="width:0%"></div>
+            <div class="distrib-seg s-na" id="dSegNa" style="width:0%"></div>
+          </div>
+          <div class="distrib-pcts">
+            <div class="distrib-pct-label" id="dPAv" style="width:0%;color:var(--green)"></div>
+            <div class="distrib-pct-label" id="dPSu" style="width:0%;color:var(--orange)"></div>
+            <div class="distrib-pct-label" id="dPNa" style="width:0%;color:var(--red)"></div>
+          </div>
         </div>
       </div>
 
       <!-- Filter chips -->
       <div class="filter-row">
-        <span style="font-size:.78rem;color:var(--muted);font-weight:500">Afficher :</span>
-        <span class="fchip active" onclick="filterResults('all',this)">Tous</span>
-        <span class="fchip green" onclick="filterResults('Available',this)">✅ Available</span>
-        <span class="fchip orange" onclick="filterResults('Suspected',this)">⚠️ Suspected</span>
-        <span class="fchip red" onclick="filterResults('NA',this)">❌ NA</span>
-        <div style="margin-left:auto;display:flex;gap:.5rem">
-          <button class="btn btn-danger btn-sm" style="font-size:.78rem;padding:.3rem .75rem" onclick="excludeNA()">Exclure NA</button>
-          <button class="btn btn-secondary" style="font-size:.78rem;padding:.3rem .75rem" onclick="excludeSuspect()">Exclure Suspected</button>
-          <button class="btn btn-green" style="font-size:.78rem;padding:.3rem .75rem" onclick="confirmSend()">✅ Confirmer envoi</button>
+        <span style="font-size:.73rem;color:var(--muted);font-weight:500">Afficher :</span>
+        <span class="fchip active" id="fAll" onclick="filterResults('all',this)">Tous</span>
+        <span class="fchip fc-green" id="fAvail" onclick="filterResults('Available',this)">✅ Available</span>
+        <span class="fchip fc-orange" id="fSusp" onclick="filterResults('Suspected',this)">⚠️ Suspected</span>
+        <span class="fchip fc-red" id="fNA" onclick="filterResults('NA',this)">❌ NA</span>
+        <div style="margin-left:auto;display:flex;gap:.4rem;flex-wrap:wrap">
+          <button class="btn btn-danger btn-sm" id="btnExcludeNA" onclick="excludeNA()">Exclure NA</button>
+          <button class="btn btn-secondary btn-sm" id="btnExcludeSusp" onclick="excludeSuspect()">Exclure Suspected</button>
+          <button class="btn btn-green btn-sm" onclick="confirmSend()">✅ Confirmer envoi</button>
         </div>
       </div>
 
-      <!-- Results table -->
+      <!-- Tableau -->
       <div class="tbl-wrap" style="border:none;border-radius:0">
         <table>
           <thead>
             <tr>
-              <th>Nom</th>
-              <th>Prénom</th>
-              <th>Téléphone</th>
-              <th>Décision</th>
-              <th>Score</th>
-              <th>P_Available</th>
-              <th>P_Suspected</th>
-              <th>P_NA</th>
-              <th>P_NA RSF 7j</th>
-              <th>P_NA RSF 30j</th>
+              <th>Nom</th><th>Prénom</th><th>Téléphone</th><th>Décision</th><th>Score</th>
+              <th>P_Available</th><th>P_Suspected</th><th>P_NA XGB</th><th>P_NA RSF 7j</th><th>P_NA RSF 30j</th>
             </tr>
           </thead>
           <tbody id="resultsTbody"></tbody>
         </table>
-        <div class="empty" id="resultsEmpty" style="display:none">
-          <div class="empty-icon">🔍</div>Aucun contact pour ce filtre
-        </div>
+        <div class="empty" id="resultsEmpty" style="display:none"><div class="empty-icon">🔍</div>Aucun contact pour ce filtre</div>
       </div>
 
     </div>
@@ -348,362 +375,313 @@ input[type=checkbox]{width:15px;height:15px;accent-color:var(--blue);cursor:poin
 
 </div>
 
-<!-- Toast -->
+<!-- Modal confirmation envoi -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">✅ Confirmer l'envoi</div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="doConfirmSend()">Confirmer l'envoi</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-const BASE = () => document.getElementById('apiUrl').value.replace(/\/$/,'');
+const BASE=()=>document.getElementById('apiUrl').value.replace(/\/$/,'');
+let allContacts=[],filteredContacts=[],selectedMsisdns=new Set(),allTags=[],activeTags=[],allResults=[];
 
-let allContacts   = [];
-let filteredContacts = [];
-let selectedMsisdns  = new Set();
-let allTags       = [];
-let activeTags    = [];
-let allResults    = [];
-let currentFilter = 'all';
+// Flags pour savoir si l'utilisateur a exclu NA et/ou Suspected
+let naExcluded=false, suspectExcluded=false;
 
-// ── Init
-window.addEventListener('load', () => { checkHealth(); loadAllContacts(); });
+window.addEventListener('load',()=>{checkHealth();loadAllContacts();});
 
-async function checkHealth() {
-  const dot = document.getElementById('sDot');
-  const txt = document.getElementById('sTxt');
-  try {
-    const r = await fetch(BASE()+'/api/health');
-    const d = await r.json();
-    dot.className = 'dot on';
-    const thr = d.score_thresholds || {};
-    const thrSrc    = d.thresholds_source    === 'pkg' ? '✅' : '⚠️';
-    const fusionSrc = d.fusion_params_source === 'pkg' ? '✅' : '⚠️';
-    const labelMap = d.label_map ? JSON.stringify(d.label_map) : '?';
-    txt.textContent = `API OK  v${d.model_version}  (${d.n_features_xgb || '?'} features)`;
-    // Tooltip enrichi
-    dot.title = [
-      `Version : ${d.model_version}`,
-      `Entraîné : ${d.trained_at || '?'}`,
-      `Features XGB : ${d.n_features_xgb || '?'}  |  RSF : ${d.n_features_rsf || '?'}`,
-      `label_map : ${labelMap}`,
-      `avail_threshold : ${d.avail_threshold ?? '?'}`,
-      `Seuils (${d.thresholds_source||'?'}) ${thrSrc} : available≥${thr.available||'?'}  suspected≥${thr.suspected||'?'}`,
-      `Fusion (${d.fusion_params_source||'?'}) ${fusionSrc}`,
-      `RSF scaler : ${d.rsf_scaler || '?'}`,
-      `Stale : ${d.is_stale}`,
-    ].join('\n');
-    if (d.thresholds_source !== 'pkg' || d.fusion_params_source !== 'pkg') {
-      showToast(`⚠️ Modèle : seuils ou fusion depuis valeurs par défaut — re-entraînez`);
-    }
-  } catch {
-    dot.className = 'dot off';
-    txt.textContent = 'API hors ligne';
-  }
+async function checkHealth(){
+  const dot=document.getElementById('sDot'),txt=document.getElementById('sTxt');
+  try{
+    const r=await fetch(BASE()+'/api/health',{signal:AbortSignal.timeout(5000)});
+    const d=await r.json();
+    dot.className='dot on';
+    txt.textContent=`API OK  v${d.model_version}  (${d.n_features_xgb||'?'} features)`;
+    const thr=d.score_thresholds||{};
+    dot.title=[`Version : ${d.model_version}`,`Entraîné : ${d.trained_at||'?'}`,
+      `Features XGB : ${d.n_features_xgb||'?'}  RSF : ${d.n_features_rsf||'?'}`,
+      `label_map : ${JSON.stringify(d.label_map||{})}`,`avail_threshold : ${d.avail_threshold??'?'}`,
+      `Seuils (${d.thresholds_source||'?'}) : available≥${thr.available||'?'}  suspected≥${thr.suspected||'?'}`,
+      `RSF scaler : ${d.rsf_scaler||'?'}`,`Stale : ${d.is_stale}`].join('\n');
+    if(d.thresholds_source!=='pkg'||d.fusion_params_source!=='pkg')showToast('⚠️ Modèle : seuils ou fusion depuis valeurs par défaut');
+  }catch{dot.className='dot off';txt.textContent='API hors ligne';}
 }
 
-async function loadAllContacts() {
-  document.getElementById('loaderContacts').style.display = 'block';
-  try {
-    const r = await fetch(BASE()+'/api/contacts');
-    const d = await r.json();
-    allContacts = d.contacts || [];
-    allTags     = d.tags     || [];
-    renderTagDropdown(allTags);
-  } catch(e) {
-    showToast('❌ Impossible de charger les contacts: '+e.message);
-  }
-  document.getElementById('loaderContacts').style.display = 'none';
+async function loadAllContacts(){
+  document.getElementById('loaderContacts').style.display='block';
+  try{
+    const r=await fetch(BASE()+'/api/contacts');
+    const d=await r.json();
+    allContacts=d.contacts||[];allTags=d.tags||[];renderTagDropdown(allTags);
+  }catch(e){showToast('❌ Impossible de charger les contacts: '+e.message);}
+  document.getElementById('loaderContacts').style.display='none';
 }
 
-// ── TAG SYSTEM
-function renderTagDropdown(tags) {
-  const dd = document.getElementById('tagDropdown');
-  dd.innerHTML = tags.map(t => `
-    <div class="tag-opt" onmousedown="selectTag('${t.name}')">
-      <span>${t.name}</span>
-      <span class="cnt">${t.count}</span>
-    </div>`).join('');
+function renderTagDropdown(tags){
+  const dd=document.getElementById('tagDropdown');
+  if(!tags.length){dd.innerHTML='<div class="tag-opt" style="color:var(--muted);cursor:default">Aucun tag</div>';return;}
+  dd.innerHTML=tags.map(t=>`<div class="tag-opt" onmousedown="selectTag('${t.name.replace(/'/g,"\\'")}')"><span>${t.name}</span><span class="cnt">${t.count}</span></div>`).join('');
 }
-
-function filterTagDropdown(val) {
-  const filtered = allTags.filter(t => t.name.toLowerCase().includes(val.toLowerCase()));
-  renderTagDropdown(filtered);
-  openTagDropdown();
+function filterTagDropdown(val){renderTagDropdown(allTags.filter(t=>t.name.toLowerCase().includes(val.toLowerCase())));openTagDropdown();}
+function openTagDropdown(){document.getElementById('tagDropdown').classList.add('open');}
+function closeTagDropdown(){document.getElementById('tagDropdown').classList.remove('open');}
+function selectTag(name){
+  if(activeTags.includes(name))return;
+  activeTags.push(name);document.getElementById('tagInput').value='';
+  renderActiveTags();filterContacts();closeTagDropdown();
 }
-
-function openTagDropdown()  { document.getElementById('tagDropdown').classList.add('open'); }
-function closeTagDropdown() { document.getElementById('tagDropdown').classList.remove('open'); }
-
-function selectTag(name) {
-  if (activeTags.includes(name)) return;
-  activeTags.push(name);
-  document.getElementById('tagInput').value = '';
-  renderActiveTags();
-  filterContacts();
-  closeTagDropdown();
-}
-
-function removeTag(name) {
-  activeTags = activeTags.filter(t => t !== name);
-  renderActiveTags();
-  filterContacts();
-}
-
-function renderActiveTags() {
-  const wrap  = document.getElementById('tagsWrap');
-  const input = document.getElementById('tagInput');
-  wrap.querySelectorAll('.tag-chip').forEach(el => el.remove());
-  activeTags.forEach(tag => {
-    const chip = document.createElement('span');
-    chip.className = 'tag-chip';
-    chip.innerHTML = `${tag} <span class="rm" onclick="removeTag('${tag}')">×</span>`;
-    wrap.insertBefore(chip, input);
+function removeTag(name){activeTags=activeTags.filter(t=>t!==name);renderActiveTags();filterContacts();}
+function renderActiveTags(){
+  const wrap=document.getElementById('tagsWrap'),input=document.getElementById('tagInput');
+  wrap.querySelectorAll('.tag-chip').forEach(el=>el.remove());
+  activeTags.forEach(tag=>{
+    const chip=document.createElement('span');chip.className='tag-chip';
+    chip.innerHTML=`${tag} <span class="rm" onmousedown="event.preventDefault();removeTag('${tag.replace(/'/g,"\\'")}')">×</span>`;
+    wrap.insertBefore(chip,input);
   });
 }
 
-// ── FILTER CONTACTS
-function filterContacts() {
-  const search  = document.getElementById('contactSearch').value.toLowerCase().trim();
-  const groupe  = document.getElementById('groupeSelect').value;
-
-  filteredContacts = allContacts.filter(c => {
-    const matchTag    = activeTags.length === 0 || activeTags.includes(c.tag);
-    const matchGroupe = !groupe || c.groupe === groupe;
-    const matchSearch = !search ||
-      c.nom?.toLowerCase().includes(search)    ||
-      c.prenom?.toLowerCase().includes(search) ||
-      c.email?.toLowerCase().includes(search)  ||
-      c.telephone?.includes(search);
-    return matchTag && matchGroupe && matchSearch;
+function filterContacts(){
+  const search=document.getElementById('contactSearch').value.toLowerCase().trim();
+  const groupe=document.getElementById('groupeSelect').value;
+  filteredContacts=allContacts.filter(c=>{
+    const mt=activeTags.length===0||activeTags.some(t=>c.tag===t);
+    const mg=!groupe||c.groupe===groupe;
+    const ms=!search||(c.nom||'').toLowerCase().includes(search)||(c.prenom||'').toLowerCase().includes(search)||(c.email||'').toLowerCase().includes(search)||(c.telephone||'').includes(search);
+    return mt&&mg&&ms;
   });
-
-  renderContactsTable(filteredContacts);
-  updateStats();
+  renderContactsTable(filteredContacts);updateStats();
 }
 
-function renderContactsTable(contacts) {
-  const tbody = document.getElementById('contactsTbody');
-  if (!contacts.length) {
-    tbody.innerHTML = `<tr><td colspan="5" class="empty"><div class="empty-icon">👥</div>${activeTags.length ? 'Aucun contact pour ces tags' : 'Sélectionnez un tag'}</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = contacts.map(c => {
-    const checked = selectedMsisdns.has(c.telephone);
-    return `
-    <tr class="${checked?'selected':''}" onclick="toggleRow('${c.telephone}',this)">
+function renderContactsTable(contacts){
+  const tbody=document.getElementById('contactsTbody');
+  if(!contacts.length){tbody.innerHTML=`<tr><td colspan="5" class="empty"><div class="empty-icon">👥</div>${activeTags.length?'Aucun contact pour ces tags':'Sélectionnez un tag'}</td></tr>`;return;}
+  tbody.innerHTML=contacts.map(c=>{
+    const checked=selectedMsisdns.has(c.telephone);
+    return `<tr class="${checked?'selected':''}" onclick="toggleRow('${c.telephone}',this)">
       <td onclick="event.stopPropagation()"><input type="checkbox" ${checked?'checked':''} onchange="toggleCheckbox('${c.telephone}',this)"></td>
-      <td>${c.nom||'—'}</td>
-      <td>${c.prenom||'—'}</td>
-      <td style="color:var(--muted);font-size:.8rem">${c.email||'—'}</td>
-      <td class="phone">${c.telephone}</td>
-    </tr>`;
+      <td>${c.nom||'—'}</td><td>${c.prenom||'—'}</td>
+      <td style="color:var(--muted);font-size:.77rem">${c.email||'—'}</td>
+      <td class="phone">${c.telephone}</td></tr>`;
   }).join('');
+}
+
+function toggleRow(msisdn,tr){
+  const chk=tr.querySelector('input[type=checkbox]');
+  if(selectedMsisdns.has(msisdn)){selectedMsisdns.delete(msisdn);tr.classList.remove('selected');if(chk)chk.checked=false;}
+  else{selectedMsisdns.add(msisdn);tr.classList.add('selected');if(chk)chk.checked=true;}
   updateStats();
 }
-
-function toggleRow(msisdn, tr) {
-  const chk = tr.querySelector('input[type=checkbox]');
-  if (selectedMsisdns.has(msisdn)) {
-    selectedMsisdns.delete(msisdn);
-    tr.classList.remove('selected');
-    if(chk) chk.checked = false;
-  } else {
-    selectedMsisdns.add(msisdn);
-    tr.classList.add('selected');
-    if(chk) chk.checked = true;
-  }
+function toggleCheckbox(msisdn,chk){
+  if(chk.checked){selectedMsisdns.add(msisdn);chk.closest('tr').classList.add('selected');}
+  else{selectedMsisdns.delete(msisdn);chk.closest('tr').classList.remove('selected');}
   updateStats();
 }
-
-function toggleCheckbox(msisdn, chk) {
-  if (chk.checked) {
-    selectedMsisdns.add(msisdn);
-    chk.closest('tr').classList.add('selected');
-  } else {
-    selectedMsisdns.delete(msisdn);
-    chk.closest('tr').classList.remove('selected');
-  }
-  updateStats();
+function toggleAll(chk){
+  if(chk.checked)filteredContacts.forEach(c=>selectedMsisdns.add(c.telephone));
+  else filteredContacts.forEach(c=>selectedMsisdns.delete(c.telephone));
+  renderContactsTable(filteredContacts);updateStats();
+}
+function clearSelection(){selectedMsisdns.clear();renderContactsTable(filteredContacts);updateStats();}
+function updateStats(){
+  const sel=selectedMsisdns.size,total=filteredContacts.length;
+  document.getElementById('selCount').textContent=`${sel} sélectionné(s) sur ${total}`;
+  document.getElementById('totalContacts').textContent=total;
+  document.getElementById('totalMessages').textContent=total;
+  document.getElementById('budgetVal').textContent=total>0?total+' SMS':'—';
+  document.getElementById('btnFiltrage').disabled=total===0;
 }
 
-function toggleAll(chk) {
-  if (chk.checked) {
-    filteredContacts.forEach(c => selectedMsisdns.add(c.telephone));
-  } else {
-    filteredContacts.forEach(c => selectedMsisdns.delete(c.telephone));
-  }
-  renderContactsTable(filteredContacts);
-  updateStats();
-}
+async function runFiltrage(){
+  const msisdns=selectedMsisdns.size>0?[...selectedMsisdns]:filteredContacts.map(c=>c.telephone);
+  if(!msisdns.length){showToast('⚠️ Aucun contact sélectionné');return;}
+  const btn=document.getElementById('btnFiltrage');
+  btn.disabled=true;btn.innerHTML='<span class="spinner-inline"></span> Analyse...';
 
-function clearSelection() {
-  selectedMsisdns.clear();
-  renderContactsTable(filteredContacts);
-  updateStats();
-}
+  // Reset flags à chaque nouvelle analyse
+  naExcluded=false;
+  suspectExcluded=false;
+  updateExcludeButtons();
 
-function updateStats() {
-  const sel = selectedMsisdns.size;
-  const total = filteredContacts.length;
-  document.getElementById('selCount').textContent = `${sel} sélectionné(s) sur ${total}`;
-  document.getElementById('totalContacts').textContent = total;
-  document.getElementById('totalMessages').textContent = total;
-  document.getElementById('budgetVal').textContent = total > 0 ? total + ' SMS' : '—';
-  document.getElementById('btnFiltrage').disabled = total === 0;
-}
-
-// ── FILTRAGE INTELLIGENT (version API corrigée)
-async function runFiltrage() {
-  const msisdns = selectedMsisdns.size > 0
-    ? [...selectedMsisdns]
-    : filteredContacts.map(c => c.telephone);
-
-  if (!msisdns.length) { showToast('⚠️ Aucun contact sélectionné'); return; }
-
-  const btn = document.getElementById('btnFiltrage');
-  btn.disabled = true;
-  btn.textContent = '⏳ Analyse en cours...';
-
-  // campagne_id optionnel (peut être ignoré par l'API mais gardé pour compatibilité)
-  const campagneId = 1;
-
-  try {
-    // MODIFICATION : on envoie uniquement msisdns (et campagne_id optionnel)
-    // plus de include_suspect / include_na
-    const r = await fetch(BASE()+'/api/predict', {
-      method : 'POST',
-      headers: {'Content-Type':'application/json'},
-      body   : JSON.stringify({
-        campagne_id : campagneId,
-        msisdns     : msisdns,
-      }),
+  try{
+    const r=await fetch(BASE()+'/api/predict',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({msisdns}),
     });
-    const d = await r.json();
-    if (!r.ok) throw new Error(d.error || r.statusText);
-
-    // MODIFICATION : la réponse n'a plus de champ 'summary'
-    // elle contient 'total' et 'contacts'
-    const contacts = d.contacts || [];
-    const totalAnalyzed = d.total || contacts.length;
-
-    // Calculer le résumé à partir des contacts
-    const summary = {
-      total: totalAnalyzed,
-      available: contacts.filter(c => c.decision === 'Available').length,
-      suspected: contacts.filter(c => c.decision === 'Suspected').length,
-      na: contacts.filter(c => c.decision === 'NA').length,
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error||r.statusText);
+    const contacts=d.contacts||[];
+    const summary={
+      total:d.total||contacts.length,
+      available:contacts.filter(c=>c.decision==='Available').length,
+      suspected:contacts.filter(c=>c.decision==='Suspected').length,
+      na:contacts.filter(c=>c.decision==='NA').length,
     };
-
-    showResults(contacts, summary, d.elapsed_ms, d.model_version);
-    showToast(`✅ Analyse terminée — ${totalAnalyzed} contacts traités`);
-  } catch(e) {
-    showToast('❌ Erreur: '+e.message);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '🔍 Filtrage Intelligent';
-  }
+    allResults=contacts;
+    showResults(contacts,summary,d.elapsed_ms,d.model_version);
+    showToast(`✅ ${summary.total} contacts analysés`);
+  }catch(e){showToast('❌ Erreur: '+e.message);}
+  finally{btn.disabled=false;btn.innerHTML='🔍 Filtrage Intelligent';}
 }
 
-function showResults(contacts, summary, elapsedMs, modelVersion) {
-  allResults = contacts;
-  currentFilter = 'all';
-
-  document.getElementById('rTotal').textContent = summary.total;
-  document.getElementById('rAvail').textContent = summary.available;
-  document.getElementById('rSusp').textContent  = summary.suspected;
-  document.getElementById('rNA').textContent    = summary.na;
-  document.getElementById('resultsSubtitle').innerHTML =
-    `${summary.total} contacts analysés  ·  ${elapsedMs || '?'}ms  ·  model v${modelVersion || '?'}`;
-
-  document.getElementById('resultsSection').style.display = 'block';
+function showResults(contacts,summary,elapsedMs,modelVersion){
+  document.getElementById('resultsSubtitle').innerHTML=`${summary.total} contacts · ${elapsedMs||'?'}ms · model v${modelVersion||'?'}`;
+  document.getElementById('resultsSection').style.display='block';
+  const total=summary.total||1,av=summary.available,su=summary.suspected,na=summary.na;
+  const avPct=total>0?Math.round(av/total*100):0;
+  const suPct=total>0?Math.round(su/total*100):0;
+  const naPct=total>0?Math.round(na/total*100):0;
+  document.getElementById('kpiTotal').textContent=total.toLocaleString('fr-FR');
+  document.getElementById('kpiTotalSub').textContent=`${total} contact${total>1?'s':''} analysés`;
+  document.getElementById('kpiAvail').textContent=av.toLocaleString('fr-FR');
+  document.getElementById('kpiSusp').textContent=su.toLocaleString('fr-FR');
+  document.getElementById('kpiNA').textContent=na.toLocaleString('fr-FR');
+  document.getElementById('kpiBudget').textContent=(na+su)+' SMS économisés';
+  document.getElementById('kpiAvailPct').textContent=avPct+'%';
+  document.getElementById('kpiSuspPct').textContent=suPct+'%';
+  document.getElementById('kpiNaPct').textContent=naPct+'%';
+  setTimeout(()=>{
+    document.getElementById('kpiAvailBar').style.width=avPct+'%';
+    document.getElementById('kpiSuspBar').style.width=suPct+'%';
+    document.getElementById('kpiNABar').style.width=naPct+'%';
+    document.getElementById('dSegAv').style.width=avPct+'%';
+    document.getElementById('dSegSu').style.width=suPct+'%';
+    document.getElementById('dSegNa').style.width=naPct+'%';
+    const pAv=document.getElementById('dPAv'),pSu=document.getElementById('dPSu'),pNa=document.getElementById('dPNa');
+    pAv.style.width=avPct+'%';pAv.textContent=avPct>6?avPct+'%':'';
+    pSu.style.width=suPct+'%';pSu.textContent=suPct>6?suPct+'%':'';
+    pNa.style.width=naPct+'%';pNa.textContent=naPct>6?naPct+'%':'';
+  },120);
   document.getElementById('resultsSection').scrollIntoView({behavior:'smooth',block:'start'});
-
-  renderResultsTable(allResults);
-  // Reset filter chips
-  document.querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
-  document.querySelector('.fchip').classList.add('active');
+  setActiveChip(document.getElementById('fAll'));
+  renderResultsTable(contacts);
 }
 
-function renderResultsTable(results) {
-  const tbody = document.getElementById('resultsTbody');
-  const empty = document.getElementById('resultsEmpty');
-
-  if (!results.length) {
-    tbody.innerHTML = '';
-    empty.style.display = 'block';
-    return;
-  }
-  empty.style.display = 'none';
-
-  tbody.innerHTML = results.map(r => {
-    const sc   = r.availability_score || 0;
-    const col  = r.decision==='Available' ? '#16a34a'
-               : r.decision==='Suspected'   ? '#d97706' : '#dc2626';
-    const bcls = r.decision==='Available' ? 'av'
-               : r.decision==='Suspected'   ? 'su' : 'na';
-    const ico  = r.decision==='Available' ? '✅'
-               : r.decision==='Suspected'   ? '⚠️' : '❌';
-
-    const contact = allContacts.find(c => c.telephone === r.msisdn) || {};
-
-    return `
-    <tr>
-      <td>${contact.nom||'—'}</td>
-      <td>${contact.prenom||'—'}</td>
+function renderResultsTable(results){
+  const tbody=document.getElementById('resultsTbody'),empty=document.getElementById('resultsEmpty');
+  if(!results.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  tbody.innerHTML=results.map(r=>{
+    const sc=r.availability_score||0;
+    const col=r.decision==='Available'?'#16a34a':r.decision==='Suspected'?'#d97706':'#dc2626';
+    const bcls=r.decision==='Available'?'av':r.decision==='Suspected'?'su':'na';
+    const ico=r.decision==='Available'?'✅':r.decision==='Suspected'?'⚠️':'❌';
+    const contact=allContacts.find(c=>c.telephone===r.msisdn)||{};
+    return `<tr>
+      <td>${contact.nom||'—'}</td><td>${contact.prenom||'—'}</td>
       <td class="phone">${r.msisdn}</td>
       <td><span class="rbadge ${bcls}">${ico} ${r.decision}</span></td>
-      <td>
-        <div class="score-mini">
-          <div class="score-bar"><div class="score-fill" style="width:${sc}%;background:${col}"></div></div>
-          <span class="score-num" style="color:${col}">${sc}</span>
-        </div>
-      </td>
-      <td style="color:#16a34a;font-family:var(--mono);font-size:.78rem">${r['p_available_%']}%</td>
-      <td style="color:#d97706;font-family:var(--mono);font-size:.78rem">${r['p_suspect_%']}%</td>
-      <td style="color:#dc2626;font-family:var(--mono);font-size:.78rem">${r['p_na_xgb_%']}%</td>
-      <td style="color:#f97316;font-family:var(--mono);font-size:.78rem">${r['p_na_rsf_7d_%']}%</td>
-      <td style="color:#b91c1c;font-family:var(--mono);font-size:.78rem">${r['p_na_rsf_30d_%']}%</td>
+      <td><div class="score-mini"><div class="score-bar"><div class="score-fill" style="width:${sc}%;background:${col}"></div></div><span class="score-num" style="color:${col}">${sc}</span></div></td>
+      <td class="pct-cell" style="color:#16a34a">${r['p_available_%']}%</td>
+      <td class="pct-cell" style="color:#d97706">${r['p_suspect_%']}%</td>
+      <td class="pct-cell" style="color:#dc2626">${r['p_na_xgb_%']}%</td>
+      <td class="pct-cell" style="color:#f97316">${r['p_na_rsf_7d_%']}%</td>
+      <td class="pct-cell" style="color:#b91c1c">${r['p_na_rsf_30d_%']}%</td>
     </tr>`;
   }).join('');
 }
 
-function filterResults(type, el) {
-  currentFilter = type;
-  document.querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  const filtered = type === 'all' ? allResults : allResults.filter(r => r.decision === type);
-  renderResultsTable(filtered);
-}
+function setActiveChip(el){document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));if(el)el.classList.add('active');}
+function filterResults(type,el){setActiveChip(el);renderResultsTable(type==='all'?allResults:allResults.filter(r=>r.decision===type));}
 
-function excludeNA() {
-  allResults = allResults.filter(r => r.decision !== 'NA');
-  // Mise à jour des compteurs d'affichage
-  document.getElementById('rNA').textContent = 0;
-  document.getElementById('rTotal').textContent = allResults.length;
-  document.getElementById('rAvail').textContent = allResults.filter(r => r.decision === 'Available').length;
-  document.getElementById('rSusp').textContent = allResults.filter(r => r.decision === 'Suspected').length;
-  filterResults('all', document.querySelector('.fchip'));
+// ── Exclure NA
+function excludeNA(){
+  allResults=allResults.filter(r=>r.decision!=='NA');
+  naExcluded=true;
+  updateExcludeButtons();
+  setActiveChip(document.getElementById('fAll'));
+  renderResultsTable(allResults);
   showToast('❌ Contacts NA exclus');
 }
 
-function excludeSuspect() {
-  allResults = allResults.filter(r => r.decision !== 'Suspected');
-  document.getElementById('rSusp').textContent = 0;
-  document.getElementById('rTotal').textContent = allResults.length;
-  document.getElementById('rAvail').textContent = allResults.filter(r => r.decision === 'Available').length;
-  document.getElementById('rNA').textContent = allResults.filter(r => r.decision === 'NA').length;
-  filterResults('all', document.querySelector('.fchip'));
+// ── Exclure Suspected
+function excludeSuspect(){
+  allResults=allResults.filter(r=>r.decision!=='Suspected');
+  suspectExcluded=true;
+  updateExcludeButtons();
+  setActiveChip(document.getElementById('fAll'));
+  renderResultsTable(allResults);
   showToast('⚠️ Contacts Suspected exclus');
 }
 
-function confirmSend() {
-  const available = allResults.filter(r => r.decision === 'Available').length;
-  showToast(`✅ ${available} contacts confirmés pour l'envoi !`);
+// Désactive le bouton après exclusion (ne peut pas exclure 2 fois)
+function updateExcludeButtons(){
+  const btnNA=document.getElementById('btnExcludeNA');
+  const btnSusp=document.getElementById('btnExcludeSusp');
+  if(naExcluded){btnNA.disabled=true;btnNA.style.opacity='.4';btnNA.style.textDecoration='line-through';}
+  else{btnNA.disabled=false;btnNA.style.opacity='';btnNA.style.textDecoration='';}
+  if(suspectExcluded){btnSusp.disabled=true;btnSusp.style.opacity='.4';btnSusp.style.textDecoration='line-through';}
+  else{btnSusp.disabled=false;btnSusp.style.opacity='';btnSusp.style.textDecoration='';}
 }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+// ── Confirmer envoi — logique principale
+function confirmSend(){
+  const av=allResults.filter(r=>r.decision==='Available').length;
+  const su=allResults.filter(r=>r.decision==='Suspected').length;
+  const na=allResults.filter(r=>r.decision==='NA').length;
+  const total=allResults.length;
+
+  let contactsToSend, bodyHtml, titleTxt;
+
+  if(!naExcluded && !suspectExcluded){
+    // Aucune exclusion → envoie TOUS les contacts restants
+    contactsToSend=allResults;
+    titleTxt='✅ Confirmer l\'envoi — Tous les contacts';
+    bodyHtml=`Aucune exclusion effectuée. L'envoi sera réalisé vers <strong>tous les contacts</strong> :<br><br>
+      <span class="badge-count badge-av">✅ ${av} Available</span>
+      <span class="badge-count badge-su">⚠️ ${su} Suspected</span>
+      <span class="badge-count badge-na">❌ ${na} NA</span>
+      <br><br>Total : <strong>${total} contacts</strong> recevront le SMS.`;
+  } else {
+    // Au moins une exclusion → envoie seulement les contacts restants dans allResults
+    contactsToSend=allResults;
+    const parts=[];
+    if(!naExcluded && na>0) parts.push(`<span class="badge-count badge-na">❌ ${na} NA</span>`);
+    if(!suspectExcluded && su>0) parts.push(`<span class="badge-count badge-su">⚠️ ${su} Suspected</span>`);
+    titleTxt='✅ Confirmer l\'envoi';
+    bodyHtml=`Envoi vers les <strong>${total} contacts restants</strong> :<br><br>
+      <span class="badge-count badge-av">✅ ${av} Available</span>
+      ${su>0?`<span class="badge-count badge-su">⚠️ ${su} Suspected</span>`:''}
+      ${na>0?`<span class="badge-count badge-na">❌ ${na} NA</span>`:''}
+      <br><br>
+      ${naExcluded?'<span style="color:var(--green);font-size:.8rem">✓ NA exclus</span><br>':''}
+      ${suspectExcluded?'<span style="color:var(--green);font-size:.8rem">✓ Suspected exclus</span><br>':''}`;
+  }
+
+  document.getElementById('modalTitle').textContent=titleTxt;
+  document.getElementById('modalBody').innerHTML=bodyHtml;
+  document.getElementById('modalOverlay').classList.add('open');
+  // Stocker les contacts à envoyer
+  window._contactsToSend=contactsToSend;
 }
+
+function doConfirmSend(){
+  const contacts=window._contactsToSend||[];
+  const msisdns=contacts.map(r=>r.msisdn);
+  closeModal();
+  showToast(`🚀 ${msisdns.length} contacts confirmés pour l'envoi !`);
+  // Ici tu peux appeler ton API d'envoi :
+  // fetch(BASE()+'/api/send', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({msisdns}) })
+  console.log('Envoi vers :', msisdns);
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+// Fermer modal en cliquant outside
+document.getElementById('modalOverlay').addEventListener('click',function(e){
+  if(e.target===this)closeModal();
+});
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
 </script>
 </body>
 </html>
