@@ -1004,39 +1004,218 @@ def model_reload():
         return _err(f"Reload échoué : {exc}", 500)
 
 
+
+# ══════════════════════════ MYSQL — CARNET D'ADRESSES ═══════════════════════
+import mysql.connector
+
+MYSQL_CONFIG = {
+    'host'    : '127.0.0.1',
+    'port'    : 3306,
+    'user'    : 'root',
+    'password': '',
+    'charset' : 'utf8mb4',
+}
+
+def _mysql_conn():
+    cfg = dict(MYSQL_CONFIG)
+    cfg['database'] = 'easybulk'
+    try:
+        return mysql.connector.connect(**cfg)
+    except mysql.connector.errors.ProgrammingError:
+        # Base pas encore créée
+        c = mysql.connector.connect(**{k:v for k,v in MYSQL_CONFIG.items()})
+        cur = c.cursor()
+        cur.execute("CREATE DATABASE IF NOT EXISTS easybulk CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+        c.commit(); cur.close(); c.close()
+        cfg2 = dict(MYSQL_CONFIG); cfg2['database'] = 'easybulk'
+        return mysql.connector.connect(**cfg2)
+
+def _mysql_init():
+    try:
+        conn = _mysql_conn()
+        cur  = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS contacts (
+                id         INT AUTO_INCREMENT PRIMARY KEY,
+                telephone  VARCHAR(20)  NOT NULL UNIQUE,
+                nom        VARCHAR(100) DEFAULT '',
+                prenom     VARCHAR(100) DEFAULT '',
+                email      VARCHAR(200) DEFAULT '',
+                pays       VARCHAR(10)  DEFAULT 'TN',
+                date_ajout DATE         NOT NULL DEFAULT (CURDATE()),
+                created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS contact_tags (
+                contact_id INT          NOT NULL,
+                tag        VARCHAR(100) NOT NULL,
+                PRIMARY KEY (contact_id, tag),
+                FOREIGN KEY (contact_id) REFERENCES contacts(id) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        """)
+        conn.commit(); cur.close(); conn.close()
+        log.info("MySQL — tables contacts / contact_tags pretes.")
+    except Exception as exc:
+        log.error(f"MySQL init echoue : {exc}")
+
+def _mysql_get_tags(cur, contact_id):
+    cur.execute("SELECT tag FROM contact_tags WHERE contact_id = %s ORDER BY tag", (contact_id,))
+    return [r[0] for r in cur.fetchall()]
+
+def _mysql_row_to_dict(row, tags):
+    return {
+        'id'        : row[0],
+        'telephone' : row[1],
+        'nom'       : row[2] or '',
+        'prenom'    : row[3] or '',
+        'email'     : row[4] or '',
+        'pays'      : row[5] or 'TN',
+        'date_ajout': str(row[6]) if row[6] else '',
+        'tags'      : tags,
+    }
+
 # ─────────────────────── GET /api/contacts ───────────────────────────────────
 @app.route('/api/contacts', methods=['GET'])
 def get_contacts():
-    contacts_path = str(_BASE_DIR / 'contacts.json')
+    tag_filter = request.args.get('tag', '').strip()
     try:
-        with open(contacts_path, encoding='utf-8') as f:
-            all_contacts = json.load(f)
-    except FileNotFoundError:
-        return _err('contacts.json introuvable', 404)
+        conn = _mysql_conn()
+        cur  = conn.cursor()
+        cur.execute("SELECT id, telephone, nom, prenom, email, pays, date_ajout FROM contacts ORDER BY created_at DESC")
+        rows = cur.fetchall()
+        all_contacts = []
+        tag_counts: Dict[str, int] = {}
+        for row in rows:
+            tags = _mysql_get_tags(cur, row[0])
+            contact = _mysql_row_to_dict(row, tags)
+            for t in tags:
+                tag_counts[t] = tag_counts.get(t, 0) + 1
+            all_contacts.append(contact)
+        contacts = [c for c in all_contacts if tag_filter.lower() in [t.lower() for t in c['tags']]] if tag_filter else all_contacts
+        cur.close(); conn.close()
+        return jsonify({'total': len(contacts), 'contacts': contacts, 'tags': [{'name': k, 'count': v} for k, v in sorted(tag_counts.items())]}), 200
+    except Exception as exc:
+        log.error(f"GET /api/contacts erreur : {exc}")
+        return _err(f"Erreur base de donnees : {exc}", 500)
 
-    contacts = list(all_contacts)
-    tag    = request.args.get('tag')
-    tag_id = request.args.get('tag_id')
-    if tag:
-        contacts = [c for c in contacts if c.get('tag', '').lower() == tag.lower()]
-    elif tag_id:
-        contacts = [c for c in contacts if str(c.get('tag_id', '')) == str(tag_id)]
+# ─────────────────────── POST /api/contacts ──────────────────────────────────
+@app.route('/api/contacts', methods=['POST'])
+def add_contact():
+    body = request.get_json(silent=True) or {}
+    telephone = str(body.get('telephone', '')).strip()
+    if not telephone or not _MSISDN_RE.match(telephone):
+        return _err("Numero de telephone invalide.", 400)
+    nom    = str(body.get('nom',    '')).strip()[:100]
+    prenom = str(body.get('prenom', '')).strip()[:100]
+    email  = str(body.get('email',  '')).strip()[:200]
+    pays   = str(body.get('pays',   'TN')).strip()[:10]
+    tags   = [str(t).strip() for t in body.get('tags', []) if str(t).strip()]
+    date_ajout = body.get('date_ajout') or datetime.now().strftime('%Y-%m-%d')
+    try:
+        conn = _mysql_conn(); cur = conn.cursor()
+        cur.execute("SELECT id FROM contacts WHERE telephone = %s", (telephone,))
+        if cur.fetchone():
+            cur.close(); conn.close()
+            return _err(f"Contact {telephone} existe deja.", 409)
+        cur.execute("INSERT INTO contacts (telephone, nom, prenom, email, pays, date_ajout) VALUES (%s,%s,%s,%s,%s,%s)",
+                    (telephone, nom, prenom, email, pays, date_ajout))
+        contact_id = cur.lastrowid
+        for tag in tags:
+            cur.execute("INSERT IGNORE INTO contact_tags (contact_id, tag) VALUES (%s,%s)", (contact_id, tag))
+        conn.commit()
+        saved_tags = _mysql_get_tags(cur, contact_id)
+        cur.execute("SELECT id, telephone, nom, prenom, email, pays, date_ajout FROM contacts WHERE id=%s", (contact_id,))
+        result = _mysql_row_to_dict(cur.fetchone(), saved_tags)
+        cur.close(); conn.close()
+        log.info(f"Contact ajoute : {telephone}")
+        return jsonify({'success': True, 'contact': result}), 201
+    except Exception as exc:
+        log.error(f"POST /api/contacts erreur : {exc}")
+        return _err(f"Erreur base de donnees : {exc}", 500)
 
-    tags: Dict[str, int] = {}
-    for c in all_contacts:
-        t = c.get('tag', '')
-        if t:
-            tags[t] = tags.get(t, 0) + 1
+# ─────────────────────── PUT /api/contacts/<telephone> ───────────────────────
+@app.route('/api/contacts/<telephone>', methods=['PUT'])
+def update_contact(telephone: str):
+    body = request.get_json(silent=True) or {}
+    nom    = str(body.get('nom',    '')).strip()[:100]
+    prenom = str(body.get('prenom', '')).strip()[:100]
+    email  = str(body.get('email',  '')).strip()[:200]
+    pays   = str(body.get('pays',   'TN')).strip()[:10]
+    tags   = [str(t).strip() for t in body.get('tags', []) if str(t).strip()]
+    try:
+        conn = _mysql_conn(); cur = conn.cursor()
+        cur.execute("SELECT id FROM contacts WHERE telephone = %s", (telephone,))
+        row = cur.fetchone()
+        if not row:
+            cur.close(); conn.close()
+            return _err(f"Contact {telephone} introuvable.", 404)
+        contact_id = row[0]
+        cur.execute("UPDATE contacts SET nom=%s, prenom=%s, email=%s, pays=%s WHERE id=%s",
+                    (nom, prenom, email, pays, contact_id))
+        cur.execute("DELETE FROM contact_tags WHERE contact_id = %s", (contact_id,))
+        for tag in tags:
+            cur.execute("INSERT IGNORE INTO contact_tags (contact_id, tag) VALUES (%s,%s)", (contact_id, tag))
+        conn.commit()
+        saved_tags = _mysql_get_tags(cur, contact_id)
+        cur.execute("SELECT id, telephone, nom, prenom, email, pays, date_ajout FROM contacts WHERE id=%s", (contact_id,))
+        result = _mysql_row_to_dict(cur.fetchone(), saved_tags)
+        cur.close(); conn.close()
+        return jsonify({'success': True, 'contact': result}), 200
+    except Exception as exc:
+        log.error(f"PUT /api/contacts/{telephone} erreur : {exc}")
+        return _err(f"Erreur base de donnees : {exc}", 500)
 
-    return jsonify({
-        'total'   : len(contacts),
-        'contacts': contacts,
-        'tags'    : [{'name': k, 'count': v} for k, v in tags.items()],
-    }), 200
+# ─────────────────────── DELETE /api/contacts/<telephone> ────────────────────
+@app.route('/api/contacts/<telephone>', methods=['DELETE'])
+def delete_contact(telephone: str):
+    try:
+        conn = _mysql_conn(); cur = conn.cursor()
+        cur.execute("DELETE FROM contacts WHERE telephone = %s", (telephone,))
+        if cur.rowcount == 0:
+            cur.close(); conn.close()
+            return _err(f"Contact {telephone} introuvable.", 404)
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({'success': True, 'deleted': telephone}), 200
+    except Exception as exc:
+        log.error(f"DELETE /api/contacts/{telephone} erreur : {exc}")
+        return _err(f"Erreur base de donnees : {exc}", 500)
+
+# ─────────────────────── POST /api/contacts/bulk ─────────────────────────────
+@app.route('/api/contacts/bulk', methods=['POST'])
+def bulk_contacts():
+    body       = request.get_json(silent=True) or {}
+    action     = body.get('action', '')
+    telephones = [str(t).strip() for t in body.get('telephones', []) if str(t).strip()]
+    tags       = [str(t).strip() for t in body.get('tags', []) if str(t).strip()]
+    if not telephones: return _err("Liste telephones vide.", 400)
+    if action not in ('delete', 'add_tag', 'remove_tag'): return _err("Action invalide.", 400)
+    try:
+        conn = _mysql_conn(); cur = conn.cursor(); affected = 0
+        for tel in telephones:
+            cur.execute("SELECT id FROM contacts WHERE telephone = %s", (tel,))
+            row = cur.fetchone()
+            if not row: continue
+            contact_id = row[0]; affected += 1
+            if action == 'delete':
+                cur.execute("DELETE FROM contacts WHERE id = %s", (contact_id,))
+            elif action == 'add_tag':
+                for tag in tags:
+                    cur.execute("INSERT IGNORE INTO contact_tags (contact_id, tag) VALUES (%s,%s)", (contact_id, tag))
+            elif action == 'remove_tag':
+                for tag in tags:
+                    cur.execute("DELETE FROM contact_tags WHERE contact_id=%s AND tag=%s", (contact_id, tag))
+        conn.commit(); cur.close(); conn.close()
+        return jsonify({'success': True, 'action': action, 'affected': affected}), 200
+    except Exception as exc:
+        log.error(f"POST /api/contacts/bulk erreur : {exc}")
+        return _err(f"Erreur base de donnees : {exc}", 500)
+
 
 
 # ═══════════════════════════ POINT D'ENTRÉE ══════════════════════════════════
 if __name__ == '__main__':
+    _mysql_init()
     log.info("  Contact Availability API »")
     log.info("=" * 60)
     log.info(f"  Mode    : {'MongoDB' if CONFIG['USE_MONGODB'] else 'JSON'}")

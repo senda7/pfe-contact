@@ -179,6 +179,118 @@ label{font-weight:600;font-size:.82rem;display:block;margin-bottom:.32rem;color:
 .req{color:var(--red)}
 @media(max-width:950px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:640px){.kpi-grid{grid-template-columns:1fr 1fr};.summary-row{grid-template-columns:1fr}}
+
+/* ── NAVIGATION TABS ── */
+.nav-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);background:var(--white);padding:0 2rem;position:sticky;top:52px;z-index:190;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.nav-tab{padding:.7rem 1.2rem;font-size:.84rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:all .15s;display:flex;align-items:center;gap:.4rem;user-select:none;white-space:nowrap}
+.nav-tab:hover{color:var(--text);background:var(--gray-light)}
+.nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-pane{display:none}.tab-pane.active{display:block}
+
+/* ── CARNET D'ADRESSES ── */
+.ca-toolbar{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:1.1rem}
+.ca-search{flex:1;min-width:180px;position:relative}
+.ca-search input{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.44rem .85rem .44rem 2rem;font-size:.84rem;outline:none;font-family:inherit;transition:border .15s}
+.ca-search input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.07)}
+.ca-search-icon{position:absolute;left:.62rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.8rem;pointer-events:none}
+.ca-filters{display:flex;gap:.5rem;flex-wrap:wrap;background:var(--light);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem .8rem;margin-bottom:.85rem}
+.ca-filter-group{display:flex;flex-direction:column;gap:.22rem;flex:1;min-width:120px}
+.ca-filter-group label{font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;margin-bottom:0}
+.ca-filter-group input,.ca-filter-group select{border:1px solid var(--border);border-radius:var(--radius-xs);padding:.3rem .55rem;font-size:.8rem;outline:none;font-family:inherit;background:var(--white);transition:border .15s}
+.ca-filter-group input:focus,.ca-filter-group select:focus{border-color:var(--blue)}
+.ca-filters-toggle{display:flex;align-items:center;gap:.35rem;padding:.38rem .72rem;border-radius:var(--radius-xs);font-size:.78rem;font-weight:600;cursor:pointer;border:1.5px solid var(--blue);color:var(--blue);background:var(--blue-light);transition:all .15s}
+.ca-filters-toggle:hover{background:var(--blue);color:white}
+.ca-filters-panel{display:none;animation:slideDown .18s ease}
+.ca-filters-panel.open{display:flex}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.ca-tbl-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border)}
+.ca-tbl{width:100%;border-collapse:collapse;font-size:.82rem}
+.ca-tbl thead{background:var(--gray-light)}
+.ca-tbl th{padding:.55rem .85rem;text-align:left;font-weight:600;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+.ca-tbl th:hover{color:var(--text)}
+.ca-tbl td{padding:.56rem .85rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.ca-tbl tr:last-child td{border-bottom:none}
+.ca-tbl tbody tr:hover td{background:var(--light)}
+.ca-tbl tr.ca-selected td{background:var(--blue-50)}
+.flag-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.75rem;font-family:var(--mono)}
+.tag-pill{display:inline-flex;align-items:center;gap:.2rem;background:var(--purple-light);color:var(--purple);border-radius:100px;padding:.12rem .48rem;font-size:.7rem;font-weight:600;margin:.1rem}
+.tag-pill.tp-blue{background:var(--blue-light);color:var(--blue)}
+.tag-pill.tp-green{background:var(--green-light);color:var(--green)}
+.tag-pill.tp-orange{background:var(--orange-light);color:var(--orange)}
+.tag-pill.tp-red{background:var(--red-light);color:var(--red)}
+.ca-actions{display:flex;gap:.3rem;align-items:center}
+.ca-action-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.8rem;transition:all .12s;color:var(--muted)}
+.ca-action-btn:hover{background:var(--gray-light);color:var(--text)}
+.ca-action-btn.del:hover{background:var(--red-light);border-color:#fecaca;color:var(--red)}
+.ca-action-btn.edit:hover{background:var(--blue-light);border-color:var(--blue-50);color:var(--blue)}
+.ca-action-btn.view:hover{background:var(--green-light);border-color:#bbf7d0;color:var(--green)}
+.ca-pagination{display:flex;align-items:center;justify-content:space-between;padding:.65rem .85rem;background:var(--light);border-top:1px solid var(--border);font-size:.78rem;color:var(--muted)}
+.ca-pages{display:flex;gap:.25rem}
+.ca-page-btn{width:30px;height:30px;border-radius:6px;border:1px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;transition:all .12s;color:var(--text)}
+.ca-page-btn:hover{background:var(--gray-light)}
+.ca-page-btn.active{background:var(--blue);color:white;border-color:var(--blue)}
+.ca-page-btn:disabled{opacity:.4;cursor:not-allowed}
+.ca-bulk{display:flex;align-items:center;gap:.5rem;padding:.48rem .85rem;background:var(--blue-50);border:1px solid var(--blue);border-radius:var(--radius-sm);margin-bottom:.75rem;animation:slideDown .2s ease}
+.ca-bulk-info{font-size:.8rem;font-weight:600;color:var(--blue-dark);flex:1}
+.ca-bulk-actions{display:flex;gap:.4rem}
+
+/* ── MODALS ── */
+.ca-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:600;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.ca-modal-overlay.open{opacity:1;pointer-events:all}
+.ca-modal{background:var(--white);border-radius:var(--radius);padding:0;width:500px;max-width:92vw;box-shadow:var(--shadow-lg);transform:translateY(18px);transition:transform .2s;overflow:hidden}
+.ca-modal-overlay.open .ca-modal{transform:translateY(0)}
+.ca-modal-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border);font-weight:700;font-size:.95rem}
+.ca-modal-body{padding:1.25rem}
+.ca-modal-footer{display:flex;gap:.5rem;justify-content:flex-end;padding:.85rem 1.25rem;border-top:1px solid var(--border);background:var(--light)}
+.ca-close{width:28px;height:28px;border-radius:6px;border:none;background:var(--gray-light);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.ca-close:hover{background:var(--red-light);color:var(--red)}
+.ca-form-grid{display:grid;gap:.85rem}
+.ca-field{display:flex;flex-direction:column;gap:.28rem}
+.ca-field label{font-size:.78rem;font-weight:600;color:var(--text)}
+.ca-field input,.ca-field select{border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:.42rem .7rem;font-size:.84rem;font-family:inherit;outline:none;transition:border .15s}
+.ca-field input:focus,.ca-field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.07)}
+.ca-field input[readonly]{background:var(--gray-light);color:var(--muted)}
+.ca-phone-wrap{display:flex;gap:.4rem;align-items:center}
+.ca-flag-sel{border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:.42rem .55rem;font-size:.84rem;font-family:inherit;outline:none;background:var(--white);transition:border .15s;min-width:90px}
+.ca-flag-sel:focus{border-color:var(--blue)}
+.ca-tags-field{border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:.35rem .55rem;display:flex;flex-wrap:wrap;gap:.3rem;align-items:center;cursor:text;min-height:38px;transition:border .15s}
+.ca-tags-field:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.07)}
+.ca-tag-chip{display:inline-flex;align-items:center;gap:.25rem;background:var(--purple);color:white;border-radius:4px;padding:.1rem .42rem;font-size:.75rem;font-weight:500}
+.ca-tag-chip .rm{cursor:pointer;opacity:.75;font-size:.9rem}
+.ca-tag-chip .rm:hover{opacity:1}
+.ca-tag-input-inner{border:none;outline:none;font-family:inherit;font-size:.82rem;flex:1;min-width:80px;background:transparent;color:var(--text)}
+
+/* IMPORT WIZARD */
+.wiz-steps{display:flex;gap:0;margin-bottom:1.5rem;background:var(--light);border-radius:var(--radius-sm);padding:.5rem;gap:.3rem}
+.wiz-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:.25rem;padding:.45rem .3rem;border-radius:var(--radius-xs);transition:all .15s;opacity:.45}
+.wiz-step.active{background:var(--white);box-shadow:var(--shadow);opacity:1}
+.wiz-step.done{opacity:.7}
+.wiz-step-num{width:22px;height:22px;border-radius:50%;background:var(--border);color:var(--muted);font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.wiz-step.active .wiz-step-num{background:var(--blue);color:white}
+.wiz-step.done .wiz-step-num{background:var(--green);color:white}
+.wiz-step-label{font-size:.7rem;font-weight:600;color:var(--muted);text-align:center}
+.wiz-step.active .wiz-step-label{color:var(--blue)}
+.wiz-step.done .wiz-step-label{color:var(--green)}
+.wiz-pane{display:none}.wiz-pane.active{display:block}
+.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:2rem;text-align:center;cursor:pointer;transition:all .2s;color:var(--muted);background:var(--light)}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--blue);background:var(--blue-light);color:var(--blue)}
+.upload-icon{font-size:2rem;margin-bottom:.5rem}
+.upload-name{display:none;background:var(--green-light);border:1px solid #bbf7d0;border-radius:var(--radius-xs);padding:.55rem .85rem;font-size:.82rem;color:var(--green);font-weight:600;margin-top:.6rem;align-items:center;gap:.4rem}
+.col-map-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:.5rem;align-items:center;margin-bottom:.55rem}
+.col-map-arrow{color:var(--muted);font-size:.85rem;text-align:center}
+.col-raw{background:var(--blue-light);color:var(--blue-dark);border-radius:var(--radius-xs);padding:.32rem .6rem;font-size:.78rem;font-weight:600;font-family:var(--mono)}
+.col-sel{border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:.3rem .55rem;font-size:.78rem;font-family:inherit;outline:none;background:var(--white);width:100%;transition:border .15s}
+.col-sel:focus{border-color:var(--blue)}
+.import-summary-table{width:100%;border-collapse:collapse;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border)}
+.import-summary-table td{padding:.6rem .9rem;border-bottom:1px solid var(--border);font-size:.84rem}
+.import-summary-table tr:last-child td{border-bottom:none}
+.import-summary-table .ist-label{font-weight:600;color:var(--muted);font-size:.78rem;width:55%}
+.import-summary-table thead td{background:var(--blue);color:white;font-weight:700;font-size:.85rem}
+.progress-bar-wrap{height:18px;background:var(--border);border-radius:100px;overflow:hidden;margin-top:.6rem}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,#22c55e,#16a34a);border-radius:100px;transition:width .4s ease;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:white;font-weight:700}
+
+/* CONFIRM DELETE */
+.del-modal-icon{width:56px;height:56px;border-radius:50%;border:2px solid var(--orange);color:var(--orange);font-size:1.5rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
 </style>
 </head>
 <body>
@@ -200,7 +312,13 @@ label{font-weight:600;font-size:.82rem;display:block;margin-bottom:.32rem;color:
   </div>
 </div>
 
-<div class="page">
+<!-- Navigation Tabs -->
+<div class="nav-tabs">
+  <div class="nav-tab active" id="tab-predictor" onclick="switchTab('predictor')">🎯 Filtrage Intelligent</div>
+  <div class="nav-tab" id="tab-carnet" onclick="switchTab('carnet')">📒 Carnet d'adresses</div>
+</div>
+
+<div class="page" id="pane-predictor" style="display:block">
 
   <!-- CONTACTS -->
   <div class="card">
@@ -229,25 +347,12 @@ label{font-weight:600;font-size:.82rem;display:block;margin-bottom:.32rem;color:
           <input type="text" id="contactSearch" placeholder="Tapez un numéro, un nom, un prénom ou un email..." oninput="filterContacts()" style="padding-left:2rem">
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
-        <div>
-          <label>Groupe <span class="req">*</span></label>
-          <div class="sel-wrap">
-            <select id="groupeSelect" onchange="filterContacts()">
-              <option value="">Tous les groupes</option>
-              <option value="Groupe A">Groupe A</option>
-              <option value="Groupe B">Groupe B</option>
-              <option value="Groupe C">Groupe C</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <div class="summary-row">
+      <div style="margin-bottom:1rem">
+        <div class="summary-row">
             <div class="bstat"><span class="blabel">Total contacts</span><span class="bvalue v-blue" id="totalContacts">0</span></div>
             <div class="bstat"><span class="blabel">Total messages</span><span class="bvalue v-blue" id="totalMessages">0</span></div>
             <div class="bstat"><span class="blabel">Budget</span><span class="bvalue v-gray" id="budgetVal">—</span></div>
           </div>
-        </div>
       </div>
       <div class="loader" id="loaderContacts"><div class="spinner"></div>Chargement...</div>
       <div class="tbl-wrap">
@@ -375,6 +480,296 @@ label{font-weight:600;font-size:.82rem;display:block;margin-bottom:.32rem;color:
 
 </div>
 
+</div><!-- /pane-predictor -->
+
+<!-- ══════════════════ CARNET D'ADRESSES ══════════════════ -->
+<div class="page" id="pane-carnet" style="display:none">
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">📒 Carnet d'adresses</div>
+        <div style="font-size:.73rem;color:var(--muted);margin-top:.1rem">Gérez vos contacts, importez des fichiers CSV et organisez par tags.</div>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="openImportWizard()">📥 Importer un fichier</button>
+        <button class="btn btn-primary btn-sm" onclick="openAddContact()">➕ Ajouter un contact</button>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- Toolbar -->
+      <div class="ca-toolbar">
+        <div class="ca-search">
+          <span class="ca-search-icon">🔍</span>
+          <input type="text" id="caSearch" placeholder="Téléphone, Nom, Prénom, Email..." oninput="caFilter()">
+        </div>
+        <button class="ca-filters-toggle" onclick="toggleCaFilters(this)">⚙️ Filtrer</button>
+      </div>
+
+      <!-- Filters panel -->
+      <div class="ca-filters ca-filters-panel" id="caFiltersPanel">
+        <div class="ca-filter-group">
+          <label>Téléphone</label>
+          <input type="text" id="caFTel" oninput="caFilter()" placeholder="ex: 216…">
+        </div>
+        <div class="ca-filter-group">
+          <label>Nom</label>
+          <input type="text" id="caFNom" oninput="caFilter()" placeholder="Nom...">
+        </div>
+        <div class="ca-filter-group">
+          <label>Prénom</label>
+          <input type="text" id="caFPrenom" oninput="caFilter()" placeholder="Prénom...">
+        </div>
+        <div class="ca-filter-group">
+          <label>Email</label>
+          <input type="text" id="caFEmail" oninput="caFilter()" placeholder="email@...">
+        </div>
+        <div class="ca-filter-group">
+          <label>Pays</label>
+          <select id="caFPays" onchange="caFilter()">
+            <option value="">Tous</option>
+            <option value="TN">🇹🇳 Tunisie</option>
+            <option value="MA">🇲🇦 Maroc</option>
+            <option value="DZ">🇩🇿 Algérie</option>
+            <option value="FR">🇫🇷 France</option>
+          </select>
+        </div>
+        <div class="ca-filter-group">
+          <label>Tag</label>
+          <select id="caFTag" onchange="caFilter()">
+            <option value="">Tous les tags</option>
+          </select>
+        </div>
+        <div class="ca-filter-group">
+          <label>Date d'ajout</label>
+          <input type="date" id="caFDate" onchange="caFilter()">
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn btn-secondary btn-sm" onclick="resetCaFilters()">↺ Réinitialiser</button>
+        </div>
+      </div>
+
+      <!-- Bulk actions bar -->
+      <div class="ca-bulk" id="caBulkBar" style="display:none">
+        <span class="ca-bulk-info" id="caBulkInfo">0 contact(s) sélectionné(s)</span>
+        <div class="ca-bulk-actions">
+          <button class="btn btn-sm" style="background:var(--purple-light);color:var(--purple);border:1px solid #e9d5ff" onclick="bulkTag()">🏷 Taguer</button>
+          <button class="btn btn-sm" style="background:var(--orange-light);color:var(--orange);border:1px solid var(--orange-50)" onclick="bulkRemoveTag()">🗑 Supprimer tags</button>
+          <button class="btn btn-danger btn-sm" onclick="bulkDelete()">🗑 Supprimer contacts</button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="ca-tbl-wrap">
+        <table class="ca-tbl">
+          <thead>
+            <tr>
+              <th style="width:36px"><input type="checkbox" id="caChkAll" onchange="caToggleAll(this)" style="width:14px;height:14px;accent-color:var(--blue)"></th>
+              <th onclick="caSort('telephone')">Téléphone <span id="sortTel"></span></th>
+              <th onclick="caSort('nom')">Nom <span id="sortNom"></span></th>
+              <th onclick="caSort('prenom')">Prénom <span id="sortPrenom"></span></th>
+              <th onclick="caSort('email')">Email <span id="sortEmail"></span></th>
+              <th onclick="caSort('dateAjout')">Date d'ajout <span id="sortDate"></span></th>
+              <th>Tags</th>
+              <th style="width:90px">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="caTbody"></tbody>
+        </table>
+        <div id="caEmpty" class="empty" style="display:none"><div class="empty-icon">📒</div>Aucun contact trouvé</div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="ca-pagination">
+        <span id="caPagInfo">0 contacts</span>
+        <div class="ca-pages" id="caPagPages"></div>
+      </div>
+
+    </div>
+  </div>
+</div><!-- /pane-carnet -->
+
+<!-- ══ MODAL: Ajouter / Modifier Contact ══ -->
+<div class="ca-modal-overlay" id="caContactModal">
+  <div class="ca-modal">
+    <div class="ca-modal-header">
+      <span id="caContactModalTitle">Ajouter un contact</span>
+      <button class="ca-close" onclick="closeCaModal('caContactModal')">×</button>
+    </div>
+    <div class="ca-modal-body">
+      <div class="ca-form-grid">
+        <div class="ca-field">
+          <label>Téléphone <span class="req">*</span></label>
+          <div class="ca-phone-wrap">
+            <select class="ca-flag-sel" id="caContactPays">
+              <option value="TN">🇹🇳 +216</option>
+              <option value="MA">🇲🇦 +212</option>
+              <option value="DZ">🇩🇿 +213</option>
+              <option value="FR">🇫🇷 +33</option>
+            </select>
+            <input type="text" id="caContactTel" placeholder="55 666 999" style="flex:1;border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:.42rem .7rem;font-size:.84rem;font-family:inherit;outline:none">
+          </div>
+        </div>
+        <div class="ca-field"><label>Nom</label><input type="text" id="caContactNom" placeholder="Nom..."></div>
+        <div class="ca-field"><label>Prénom</label><input type="text" id="caContactPrenom" placeholder="Prénom..."></div>
+        <div class="ca-field"><label>Email</label><input type="text" id="caContactEmail" placeholder="email@..."></div>
+        <div class="ca-field">
+          <label>Tags</label>
+          <div class="ca-tags-field" id="caContactTagsWrap" onclick="document.getElementById('caContactTagInput').focus()">
+            <input type="text" id="caContactTagInput" class="ca-tag-input-inner" placeholder="Ajouter un tag..." oninput="caSuggestTags(this.value)" onfocus="caSuggestTags('')">
+          </div>
+          <div id="caTagSuggest" style="position:relative;z-index:60"></div>
+        </div>
+      </div>
+    </div>
+    <div class="ca-modal-footer">
+      <button class="btn btn-secondary" onclick="closeCaModal('caContactModal')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveCaContact()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Vue détaillée ══ -->
+<div class="ca-modal-overlay" id="caViewModal">
+  <div class="ca-modal">
+    <div class="ca-modal-header">
+      <span>Consulter un contact</span>
+      <button class="ca-close" onclick="closeCaModal('caViewModal')">×</button>
+    </div>
+    <div class="ca-modal-body">
+      <div class="ca-form-grid">
+        <div class="ca-field"><label>Téléphone <span class="req">*</span></label>
+          <div class="ca-phone-wrap">
+            <select class="ca-flag-sel" id="caViewPays" disabled><option value="TN">🇹🇳 +216</option><option value="MA">🇲🇦 +212</option><option value="DZ">🇩🇿 +213</option><option value="FR">🇫🇷 +33</option></select>
+            <input type="text" id="caViewTel" readonly style="flex:1;border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:.42rem .7rem;font-size:.84rem;font-family:inherit;background:var(--gray-light);color:var(--muted)">
+          </div>
+        </div>
+        <div class="ca-field"><label>Nom</label><input type="text" id="caViewNom" readonly></div>
+        <div class="ca-field"><label>Prénom</label><input type="text" id="caViewPrenom" readonly></div>
+        <div class="ca-field"><label>Email</label><input type="text" id="caViewEmail" readonly></div>
+        <div class="ca-field"><label>Tags</label><div id="caViewTags" style="display:flex;flex-wrap:wrap;gap:.3rem;padding:.4rem 0"></div></div>
+      </div>
+    </div>
+    <div class="ca-modal-footer">
+      <button class="btn btn-secondary" onclick="closeCaModal('caViewModal')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Supprimer contact ══ -->
+<div class="ca-modal-overlay" id="caDeleteModal">
+  <div class="ca-modal" style="width:380px">
+    <div class="ca-modal-body" style="text-align:center;padding:1.75rem">
+      <div class="del-modal-icon">!</div>
+      <div style="font-weight:700;font-size:1.05rem;margin-bottom:.5rem" id="caDeleteTitle">Êtes-vous sûr de supprimer ce contact ?</div>
+      <div style="font-size:.82rem;color:var(--muted);margin-bottom:1.25rem" id="caDeleteBody"></div>
+      <div style="display:flex;gap:.65rem;justify-content:center">
+        <button class="btn btn-green" onclick="confirmCaDelete()">Oui</button>
+        <button class="btn btn-danger" onclick="closeCaModal('caDeleteModal')">Non</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Import Wizard ══ -->
+<div class="ca-modal-overlay" id="caImportModal">
+  <div class="ca-modal" style="width:580px">
+    <div class="ca-modal-header">
+      <span>📥 Importer un carnet d'adresses</span>
+      <button class="ca-close" onclick="closeCaModal('caImportModal')">×</button>
+    </div>
+    <div class="ca-modal-body">
+      <!-- Steps -->
+      <div class="wiz-steps">
+        <div class="wiz-step active" id="wStep1"><div class="wiz-step-num">1</div><div class="wiz-step-label">Ajouter un Fichier</div></div>
+        <div class="wiz-step" id="wStep2"><div class="wiz-step-num">2</div><div class="wiz-step-label">Identification</div></div>
+        <div class="wiz-step" id="wStep3"><div class="wiz-step-num">3</div><div class="wiz-step-label">Confirmation</div></div>
+        <div class="wiz-step" id="wStep4"><div class="wiz-step-num">4</div><div class="wiz-step-label">Terminé</div></div>
+      </div>
+      <!-- Pane 1: Upload -->
+      <div class="wiz-pane active" id="wPane1">
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('csvFileInput').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleCSVDrop(event)">
+          <div class="upload-icon">📄</div>
+          <div style="font-weight:600;font-size:.9rem;margin-bottom:.3rem">Choisissez un fichier CSV</div>
+          <div style="font-size:.78rem;color:var(--muted)">Glissez-déposez ou cliquez pour sélectionner · Taille max : 30 Mo</div>
+          <input type="file" id="csvFileInput" accept=".csv,.txt" style="display:none" onchange="handleCSVFile(this.files[0])">
+        </div>
+        <div class="upload-name" id="uploadName">📄 <span id="uploadNameText"></span></div>
+      </div>
+      <!-- Pane 2: Column mapping -->
+      <div class="wiz-pane" id="wPane2">
+        <div style="font-size:.82rem;color:var(--muted);margin-bottom:.85rem">Associez chaque colonne CSV à un champ contact :</div>
+        <div id="colMapGrid"></div>
+        <div style="margin-top:1rem">
+          <label style="font-size:.78rem;font-weight:600;margin-bottom:.3rem;display:block">Aperçu des données</label>
+          <div style="overflow-x:auto;border-radius:var(--radius-xs);border:1px solid var(--border)">
+            <table style="font-size:.75rem;border-collapse:collapse;width:100%" id="csvPreviewTable"></table>
+          </div>
+        </div>
+        <div style="margin-top:.85rem">
+          <label style="font-size:.78rem;font-weight:600;margin-bottom:.3rem;display:block">Tags à appliquer</label>
+          <div class="ca-tags-field" id="importTagsWrap" onclick="document.getElementById('importTagInput').focus()" style="min-height:34px">
+            <input type="text" id="importTagInput" class="ca-tag-input-inner" placeholder="Tag..." oninput="caSuggestImportTags(this.value)">
+          </div>
+        </div>
+      </div>
+      <!-- Pane 3: Confirmation summary -->
+      <div class="wiz-pane" id="wPane3">
+        <table class="import-summary-table">
+          <thead><tr><td colspan="2">Récapitulatif de votre carnet d'adresses</td></tr></thead>
+          <tbody>
+            <tr><td class="ist-label">Nom du fichier</td><td id="sumFile">—</td></tr>
+            <tr><td class="ist-label">Nombre de contacts</td><td id="sumTotal">0</td></tr>
+            <tr><td class="ist-label">Nombre de contacts valides</td><td id="sumValid">0</td></tr>
+            <tr><td class="ist-label">Tags :</td><td id="sumTags">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Pane 4: Progress -->
+      <div class="wiz-pane" id="wPane4">
+        <div style="text-align:center;margin-bottom:1rem">
+          <div style="font-weight:700;font-size:.95rem;margin-bottom:.3rem" id="wPane4Title">Import en cours...</div>
+          <div style="font-size:.8rem;color:var(--muted)">Le carnet d'adresses est en cours d'importation, veuillez patienter.</div>
+        </div>
+        <div style="margin-bottom:.3rem;font-size:.78rem;color:var(--muted)">Progression :</div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" id="importProgress" style="width:0%">0%</div></div>
+      </div>
+    </div>
+    <div class="ca-modal-footer" id="wFooter">
+      <button class="btn btn-secondary" id="wBtnBack" onclick="wizBack()" style="display:none">← Retour</button>
+      <button class="btn btn-primary" id="wBtnNext" onclick="wizNext()">Continuer →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Bulk Tag ══ -->
+<div class="ca-modal-overlay" id="caBulkTagModal">
+  <div class="ca-modal" style="width:400px">
+    <div class="ca-modal-header">
+      <span id="caBulkTagTitle">Ajouter un tag</span>
+      <button class="ca-close" onclick="closeCaModal('caBulkTagModal')">×</button>
+    </div>
+    <div class="ca-modal-body">
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:.85rem" id="caBulkTagDesc">Ajouter le tag sélectionné aux numéros concernés</div>
+      <div class="ca-field">
+        <label>Tags</label>
+        <select class="col-sel" id="caBulkTagSel" style="border:1.5px solid var(--border);padding:.42rem .7rem;font-size:.84rem">
+          <option value="">Sélectionner un tag</option>
+        </select>
+      </div>
+      <div id="caBulkTagResetWrap" style="margin-top:.75rem;display:flex;align-items:center;gap:.5rem">
+        <input type="checkbox" id="caBulkTagReset" style="accent-color:var(--blue)">
+        <label for="caBulkTagReset" style="font-weight:400;font-size:.82rem;margin-bottom:0">Réinitialiser les tags</label>
+      </div>
+    </div>
+    <div class="ca-modal-footer">
+      <button class="btn btn-secondary" onclick="closeCaModal('caBulkTagModal')">Annuler</button>
+      <button class="btn btn-primary" onclick="confirmBulkTag()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal confirmation envoi -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
@@ -395,8 +790,6 @@ let allContacts=[],filteredContacts=[],selectedMsisdns=new Set(),allTags=[],acti
 
 // Flags pour savoir si l'utilisateur a exclu NA et/ou Suspected
 let naExcluded=false, suspectExcluded=false;
-
-window.addEventListener('load',()=>{checkHealth();loadAllContacts();});
 
 async function checkHealth(){
   const dot=document.getElementById('sDot'),txt=document.getElementById('sTxt');
@@ -420,22 +813,63 @@ async function loadAllContacts(){
   try{
     const r=await fetch(BASE()+'/api/contacts');
     const d=await r.json();
-    allContacts=d.contacts||[];allTags=d.tags||[];renderTagDropdown(allTags);
-  }catch(e){showToast('❌ Impossible de charger les contacts: '+e.message);}
+    allContacts=d.contacts||[];
+    allTags=d.tags||[];
+    renderTagDropdown(allTags);
+  }catch(e){
+    showToast('❌ Impossible de charger les contacts: '+e.message);
+  }
   document.getElementById('loaderContacts').style.display='none';
 }
 
-function renderTagDropdown(tags){
+function renderTagDropdown(tags, typedVal){
   const dd=document.getElementById('tagDropdown');
-  if(!tags.length){dd.innerHTML='<div class="tag-opt" style="color:var(--muted);cursor:default">Aucun tag</div>';return;}
-  dd.innerHTML=tags.map(t=>`<div class="tag-opt" onmousedown="selectTag('${t.name.replace(/'/g,"\\'")}')"><span>${t.name}</span><span class="cnt">${t.count}</span></div>`).join('');
+  // Fusionner avec les tags du carnet d'adresses
+  const allMerged = getMergedTags(tags);
+  const items = allMerged.filter(t=>!activeTags.includes(t.name));
+  if(!items.length){
+    dd.innerHTML='<div class="tag-opt" style="color:var(--muted);cursor:default;font-size:.8rem">Aucun tag disponible</div>';
+    return;
+  }
+  const filtered = typedVal ? items.filter(t=>t.name.toLowerCase().includes(typedVal.toLowerCase())) : items;
+  if(!filtered.length){
+    dd.innerHTML='<div class="tag-opt" style="color:var(--muted);cursor:default;font-size:.8rem">Aucun résultat</div>';
+    return;
+  }
+  dd.innerHTML=filtered.map(t=>`<div class="tag-opt" onmousedown="selectTag('${t.name.replace(/'/g,"\\'")}')"><span>${t.name}</span><span class="cnt">${t.count||''}</span></div>`).join('');
 }
-function filterTagDropdown(val){renderTagDropdown(allTags.filter(t=>t.name.toLowerCase().includes(val.toLowerCase())));openTagDropdown();}
-function openTagDropdown(){document.getElementById('tagDropdown').classList.add('open');}
+
+// Récupère tous les tags depuis : API + carnet d'adresses (localStorage)
+function getMergedTags(baseTags){
+  const map = new Map();
+  (baseTags||allTags).forEach(t=>map.set(t.name, {name:t.name, count:t.count||0}));
+  // Tags depuis les contacts du carnet d'adresses
+  try{
+    const contacts = JSON.parse(localStorage.getItem('ca_contacts')||'[]');
+    contacts.forEach(c=>(c.tags||[]).forEach(tag=>{
+      if(!map.has(tag)) map.set(tag,{name:tag,count:0});
+      else map.get(tag).count++;
+    }));
+  }catch{}
+  return [...map.values()].sort((a,b)=>a.name.localeCompare(b.name));
+}
+
+function filterTagDropdown(val){
+  renderTagDropdown(null, val);
+  openTagDropdown();
+}
+function openTagDropdown(){
+  const val=document.getElementById('tagInput').value;
+  renderTagDropdown(null, val);
+  document.getElementById('tagDropdown').classList.add('open');
+}
 function closeTagDropdown(){document.getElementById('tagDropdown').classList.remove('open');}
+
 function selectTag(name){
-  if(activeTags.includes(name))return;
-  activeTags.push(name);document.getElementById('tagInput').value='';
+  name=name.trim();
+  if(!name||activeTags.includes(name))return;
+  activeTags.push(name);
+  document.getElementById('tagInput').value='';
   renderActiveTags();filterContacts();closeTagDropdown();
 }
 function removeTag(name){activeTags=activeTags.filter(t=>t!==name);renderActiveTags();filterContacts();}
@@ -448,15 +882,16 @@ function renderActiveTags(){
     wrap.insertBefore(chip,input);
   });
 }
+document.getElementById('tagInput').addEventListener('keydown',function(e){
+  if(e.key==='Escape') closeTagDropdown();
+});
 
 function filterContacts(){
   const search=document.getElementById('contactSearch').value.toLowerCase().trim();
-  const groupe=document.getElementById('groupeSelect').value;
   filteredContacts=allContacts.filter(c=>{
     const mt=activeTags.length===0||activeTags.some(t=>c.tag===t);
-    const mg=!groupe||c.groupe===groupe;
     const ms=!search||(c.nom||'').toLowerCase().includes(search)||(c.prenom||'').toLowerCase().includes(search)||(c.email||'').toLowerCase().includes(search)||(c.telephone||'').includes(search);
-    return mt&&mg&&ms;
+    return mt&&ms;
   });
   renderContactsTable(filteredContacts);updateStats();
 }
@@ -682,6 +1117,658 @@ document.getElementById('modalOverlay').addEventListener('click',function(e){
 });
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
+
+/* ════════════════════════════════════════
+   TAB NAVIGATION
+════════════════════════════════════════ */
+function switchTab(tab){
+  document.getElementById('pane-predictor').style.display = tab==='predictor'?'block':'none';
+  document.getElementById('pane-carnet').style.display = tab==='carnet'?'block':'none';
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='carnet') renderCaTable();
+}
+
+/* ════════════════════════════════════════
+   CARNET D'ADRESSES — DATA
+════════════════════════════════════════ */
+const TAG_COLORS=['','tp-blue','tp-green','tp-orange','tp-red',''];
+const COUNTRY_FLAGS={TN:'🇹🇳',MA:'🇲🇦',DZ:'🇩🇿',FR:'🇫🇷','':''};
+const COUNTRY_CODES={TN:'+216',MA:'+212',DZ:'+213',FR:'+33'};
+
+let caContacts = []; // populated from allContacts + local storage
+let caFiltered = [];
+let caSelected = new Set();
+let caSortKey = 'dateAjout';
+let caSortDir = -1; // -1 = desc
+let caPage = 1;
+const CA_PER_PAGE = 15;
+let caEditIndex = null; // null=add, number=edit
+let caDeleteTarget = null; // {index, bulk}
+let caBulkMode = null; // 'tag' | 'removeTag'
+let wizStep = 1;
+let wizCSVData = [];
+let wizCSVHeaders = [];
+let wizImportTags = [];
+let importContactTagsLocal = [];
+
+// Recharge les contacts depuis l'API
+async function reloadCaContacts(){
+  try{
+    const r=await fetch(BASE()+'/api/contacts');
+    if(!r.ok){ caFilter(); return; }
+    const d=await r.json();
+    if(d.error){ caFilter(); return; }
+    caContacts=(d.contacts||[]).map(c=>({
+      ...c,
+      tags: Array.isArray(c.tags) ? c.tags : (c.tag ? [c.tag] : []),
+      dateAjout: c.date_ajout || c.dateAjout || '',
+    }));
+    allTags=d.tags||[];
+    console.log('Contacts chargés:', caContacts.length);
+  }catch(e){
+    console.warn('reloadCaContacts failed:', e.message);
+  }
+  caFilter();
+}
+
+// Garde pour compatibilité (plus utilisé pour sauvegarder)
+function caLoadContacts(){ /* données viennent de l'API désormais */ }
+function caSaveContacts(){ /* sauvegarde gérée par l'API désormais */ }
+
+function caGetAllTags(){
+  const s = new Set();
+  caContacts.forEach(c=>(c.tags||[]).forEach(t=>s.add(t)));
+  allTags.forEach(t=>s.add(t.name));
+  return [...s].sort();
+}
+
+function caGetTagColor(tag){
+  const tags = caGetAllTags();
+  const idx = tags.indexOf(tag)%5;
+  return TAG_COLORS[idx]||'';
+}
+
+/* ── Sync allContacts from API into caContacts (merge, no dup) ── */
+function caSyncFromAPI(){
+  allContacts.forEach(ac=>{
+    const exists = caContacts.find(c=>c.telephone===ac.telephone);
+    if(!exists){
+      caContacts.push({
+        telephone: ac.telephone,
+        nom: ac.nom||'',
+        prenom: ac.prenom||'',
+        email: ac.email||'',
+        pays: 'TN',
+        tags: ac.tag?[ac.tag]:[],
+        dateAjout: ac.dateAjout || new Date().toISOString().slice(0,10)
+      });
+    }
+  });
+  caSaveContacts();
+}
+
+/* ════════════════════════════════════════
+   CARNET D'ADRESSES — FILTER & RENDER
+════════════════════════════════════════ */
+function caFilter(){
+  const q = (document.getElementById('caSearch').value||'').toLowerCase();
+  const fTel = (document.getElementById('caFTel').value||'').toLowerCase();
+  const fNom = (document.getElementById('caFNom').value||'').toLowerCase();
+  const fPrenom = (document.getElementById('caFPrenom').value||'').toLowerCase();
+  const fEmail = (document.getElementById('caFEmail').value||'').toLowerCase();
+  const fPays = document.getElementById('caFPays').value;
+  const fTag = document.getElementById('caFTag').value;
+  const fDate = document.getElementById('caFDate').value;
+  caFiltered = caContacts.filter(c=>{
+    if(q && ![(c.telephone||''),(c.nom||''),(c.prenom||''),(c.email||'')].some(v=>v.toLowerCase().includes(q))) return false;
+    if(fTel && !(c.telephone||'').toLowerCase().includes(fTel)) return false;
+    if(fNom && !(c.nom||'').toLowerCase().includes(fNom)) return false;
+    if(fPrenom && !(c.prenom||'').toLowerCase().includes(fPrenom)) return false;
+    if(fEmail && !(c.email||'').toLowerCase().includes(fEmail)) return false;
+    if(fPays && c.pays!==fPays) return false;
+    if(fTag && !(c.tags||[]).includes(fTag)) return false;
+    if(fDate && c.dateAjout!==fDate) return false;
+    return true;
+  });
+  // sort
+  caFiltered.sort((a,b)=>{
+    let va=a[caSortKey]||'', vb=b[caSortKey]||'';
+    return va<vb?-caSortDir:va>vb?caSortDir:0;
+  });
+  caPage=1;
+  renderCaTable();
+}
+
+function caSort(key){
+  if(caSortKey===key) caSortDir*=-1; else {caSortKey=key;caSortDir=1;}
+  ['Tel','Nom','Prenom','Email','Date'].forEach(k=>{
+    const el = document.getElementById('sort'+k);
+    if(el) el.textContent='';
+  });
+  const map={telephone:'Tel',nom:'Nom',prenom:'Prenom',email:'Email',dateAjout:'Date'};
+  const el = document.getElementById('sort'+(map[key]||''));
+  if(el) el.textContent = caSortDir===1?' ↑':' ↓';
+  caFilter();
+}
+
+function renderCaTable(){
+  // populate tag filter
+  const tagSel = document.getElementById('caFTag');
+  const curTag = tagSel.value;
+  tagSel.innerHTML = '<option value="">Tous les tags</option>' + caGetAllTags().map(t=>`<option value="${t}" ${t===curTag?'selected':''}>${t}</option>`).join('');
+
+  const total = caFiltered.length;
+  const pages = Math.ceil(total/CA_PER_PAGE)||1;
+  if(caPage>pages) caPage=1;
+  const start=(caPage-1)*CA_PER_PAGE, end=Math.min(start+CA_PER_PAGE,total);
+  const slice=caFiltered.slice(start,end);
+
+  document.getElementById('caPagInfo').textContent=`${total} contact${total!==1?'s':''}  (${start+1}–${end})`;
+
+  // pages
+  const pPag=document.getElementById('caPagPages');
+  let pHtml=`<button class="ca-page-btn" onclick="caGoPage(${caPage-1})" ${caPage===1?'disabled':''}>‹</button>`;
+  for(let i=1;i<=pages;i++) pHtml+=`<button class="ca-page-btn ${i===caPage?'active':''}" onclick="caGoPage(${i})">${i}</button>`;
+  pHtml+=`<button class="ca-page-btn" onclick="caGoPage(${caPage+1})" ${caPage===pages?'disabled':''}>›</button>`;
+  pPag.innerHTML=pHtml;
+
+  // table
+  const tbody=document.getElementById('caTbody');
+  const empty=document.getElementById('caEmpty');
+  if(!slice.length){tbody.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+
+  const allSel = slice.every(c=>caSelected.has(c.telephone));
+  document.getElementById('caChkAll').checked = allSel;
+
+  tbody.innerHTML = slice.map((c,i)=>{
+    const ci = caContacts.indexOf(c);
+    const sel = caSelected.has(c.telephone);
+    const flag = COUNTRY_FLAGS[c.pays||'TN']||'🌍';
+    const tags = (c.tags||[]).map(t=>`<span class="tag-pill ${caGetTagColor(t)}">${t}</span>`).join('');
+    return `<tr class="${sel?'ca-selected':''}">
+      <td><input type="checkbox" ${sel?'checked':''} style="width:14px;height:14px;accent-color:var(--blue)" onchange="caToggleOne('${c.telephone}',this)"></td>
+      <td><span class="flag-badge">${flag} ${c.telephone}</span></td>
+      <td style="font-weight:${c.nom?'600':'400'}">${c.nom||'<span style="color:var(--muted)">—</span>'}</td>
+      <td>${c.prenom||'<span style="color:var(--muted)">—</span>'}</td>
+      <td style="color:var(--muted);font-size:.77rem">${c.email||'<span>—</span>'}</td>
+      <td style="color:var(--muted);font-size:.75rem">${c.dateAjout||'—'}</td>
+      <td>${tags||'<span style="color:var(--muted);font-size:.75rem">—</span>'}</td>
+      <td>
+        <div class="ca-actions">
+          <button class="ca-action-btn edit" title="Modifier" onclick="openEditContact(${ci})">✏️</button>
+          <button class="ca-action-btn view" title="Consulter" onclick="openViewContact(${ci})">👁</button>
+          <button class="ca-action-btn del" title="Supprimer" onclick="openDeleteContact(${ci})">🗑</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // bulk bar
+  const bulkBar=document.getElementById('caBulkBar');
+  if(caSelected.size>0){bulkBar.style.display='flex';document.getElementById('caBulkInfo').textContent=`${caSelected.size} contact(s) sélectionné(s) · Agit sur le total ${caFiltered.length}`;}
+  else bulkBar.style.display='none';
+}
+
+function caGoPage(p){const pages=Math.ceil(caFiltered.length/CA_PER_PAGE)||1;if(p<1||p>pages)return;caPage=p;renderCaTable();}
+function caToggleOne(tel,chk){if(chk.checked)caSelected.add(tel);else caSelected.delete(tel);renderCaTable();}
+function caToggleAll(chk){const pages=Math.ceil(caFiltered.length/CA_PER_PAGE)||1;const start=(caPage-1)*CA_PER_PAGE;const slice=caFiltered.slice(start,start+CA_PER_PAGE);if(chk.checked)slice.forEach(c=>caSelected.add(c.telephone));else slice.forEach(c=>caSelected.delete(c.telephone));renderCaTable();}
+function toggleCaFilters(btn){const p=document.getElementById('caFiltersPanel');p.classList.toggle('open');btn.textContent=p.classList.contains('open')?'✕ Fermer':'⚙️ Filtrer';}
+function resetCaFilters(){['caFTel','caFNom','caFPrenom','caFEmail','caFDate','caSearch'].forEach(id=>document.getElementById(id).value='');document.getElementById('caFPays').value='';document.getElementById('caFTag').value='';caFilter();}
+
+/* ════════════════════════════════════════
+   ADD / EDIT / VIEW / DELETE CONTACT
+════════════════════════════════════════ */
+let caContactTags = [];
+
+function openAddContact(){
+  caEditIndex=null; caContactTags=[];
+  document.getElementById('caContactModalTitle').textContent='Ajouter un contact';
+  ['caContactTel','caContactNom','caContactPrenom','caContactEmail'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('caContactPays').value='TN';
+  renderContactModalTags();
+  openCaModal('caContactModal');
+}
+
+function openEditContact(idx){
+  caEditIndex=idx;
+  const c=caContacts[idx];
+  caContactTags=[...(c.tags||[])];
+  document.getElementById('caContactModalTitle').textContent='Modifier un contact';
+  document.getElementById('caContactTel').value=c.telephone||'';
+  document.getElementById('caContactNom').value=c.nom||'';
+  document.getElementById('caContactPrenom').value=c.prenom||'';
+  document.getElementById('caContactEmail').value=c.email||'';
+  document.getElementById('caContactPays').value=c.pays||'TN';
+  renderContactModalTags();
+  openCaModal('caContactModal');
+}
+
+function openViewContact(idx){
+  const c=caContacts[idx];
+  document.getElementById('caViewTel').value=c.telephone||'';
+  document.getElementById('caViewNom').value=c.nom||'';
+  document.getElementById('caViewPrenom').value=c.prenom||'';
+  document.getElementById('caViewEmail').value=c.email||'';
+  document.getElementById('caViewPays').value=c.pays||'TN';
+  document.getElementById('caViewTags').innerHTML=(c.tags||[]).map(t=>`<span class="tag-pill ${caGetTagColor(t)}">${t}</span>`).join('')||'<span style="color:var(--muted);font-size:.8rem">Aucun tag</span>';
+  openCaModal('caViewModal');
+}
+
+function openDeleteContact(idx){
+  caDeleteTarget={index:idx,bulk:false};
+  const c=caContacts[idx];
+  document.getElementById('caDeleteTitle').textContent='Êtes-vous sûr de supprimer ce contact ?';
+  document.getElementById('caDeleteBody').textContent=`${c.telephone}${c.nom?' – '+c.nom:''}`;
+  openCaModal('caDeleteModal');
+}
+
+async function saveCaContact(){
+  const tel=document.getElementById('caContactTel').value.trim();
+  if(!tel){showToast('⚠️ Le numéro de téléphone est obligatoire');return;}
+  const contact={
+    telephone: tel,
+    nom: document.getElementById('caContactNom').value.trim(),
+    prenom: document.getElementById('caContactPrenom').value.trim(),
+    email: document.getElementById('caContactEmail').value.trim(),
+    pays: document.getElementById('caContactPays').value,
+    tags: [...caContactTags],
+  };
+  try{
+    let res, data;
+    if(caEditIndex!==null){
+      // Modifier — PUT /api/contacts/:tel
+      res = await fetch(BASE()+'/api/contacts/'+encodeURIComponent(caContacts[caEditIndex].telephone),{
+        method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(contact)
+      });
+    } else {
+      // Ajouter — POST /api/contacts
+      res = await fetch(BASE()+'/api/contacts',{
+        method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(contact)
+      });
+    }
+    data = await res.json();
+    if(!res.ok){ showToast('❌ '+(data.error||'Erreur API')); return; }
+    showToast(caEditIndex!==null?'✅ Contact modifié':'✅ Contact ajouté');
+    closeCaModal('caContactModal');
+    // Recharger les contacts depuis l'API
+    await reloadCaContacts();
+  } catch(e){ showToast('❌ Erreur réseau : '+e.message); }
+}
+
+async function confirmCaDelete(){
+  if(!caDeleteTarget) return;
+  try{
+    if(caDeleteTarget.bulk){
+      const tels=[...caDeleteTarget.tels];
+      const res=await fetch(BASE()+'/api/contacts/bulk',{
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'delete', telephones:tels})
+      });
+      const data=await res.json();
+      if(!res.ok){showToast('❌ '+(data.error||'Erreur API'));return;}
+      caSelected.clear();
+      showToast(`🗑 ${data.affected} contact(s) supprimé(s)`);
+    } else {
+      const tel=caContacts[caDeleteTarget.index].telephone;
+      const res=await fetch(BASE()+'/api/contacts/'+encodeURIComponent(tel),{method:'DELETE'});
+      const data=await res.json();
+      if(!res.ok){showToast('❌ '+(data.error||'Erreur API'));return;}
+      showToast('🗑 Contact supprimé');
+    }
+    closeCaModal('caDeleteModal');
+    await reloadCaContacts();
+  } catch(e){ showToast('❌ Erreur réseau : '+e.message); }
+}
+
+/* ════════════════════════════════════════
+   TAG MANAGEMENT IN MODAL
+════════════════════════════════════════ */
+function renderContactModalTags(){
+  const wrap=document.getElementById('caContactTagsWrap'),input=document.getElementById('caContactTagInput');
+  wrap.querySelectorAll('.ca-tag-chip').forEach(e=>e.remove());
+  caContactTags.forEach(tag=>{
+    const chip=document.createElement('span');chip.className='ca-tag-chip';
+    chip.innerHTML=`${tag} <span class="rm" onmousedown="event.preventDefault();removeContactModalTag('${tag.replace(/'/g,"\\'")}')" >×</span>`;
+    wrap.insertBefore(chip,input);
+  });
+}
+function removeContactModalTag(tag){caContactTags=caContactTags.filter(t=>t!==tag);renderContactModalTags();}
+function addContactModalTag(tag){if(!tag||caContactTags.includes(tag))return;caContactTags.push(tag);document.getElementById('caContactTagInput').value='';renderContactModalTags();document.getElementById('caTagSuggest').innerHTML='';}
+
+function caSuggestTags(val){
+  const all=caGetAllTags().filter(t=>t.toLowerCase().includes(val.toLowerCase())&&!caContactTags.includes(t));
+  const el=document.getElementById('caTagSuggest');
+  const items=[...all.slice(0,8)];
+  // Proposer création si le tag n'existe pas encore
+  if(val.trim()&&!caGetAllTags().includes(val.trim())&&!caContactTags.includes(val.trim())){
+    items.unshift('__new__:'+val.trim());
+  }
+  if(!items.length){el.innerHTML='';return;}
+  el.innerHTML=`<div style="position:absolute;width:100%;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-xs);box-shadow:var(--shadow-md);z-index:70;max-height:180px;overflow-y:auto">`+
+    items.map(t=>{
+      if(t.startsWith('__new__:')){
+        const v=t.slice(8);
+        return `<div style="padding:.42rem .75rem;cursor:pointer;font-size:.82rem;color:var(--blue);font-weight:600;border-bottom:1px solid var(--border)" onmousedown="event.preventDefault();addContactModalTag('${v.replace(/'/g,"\\'")}')" onmouseover="this.style.background='var(--blue-light)'" onmouseout="this.style.background=''">➕ Créer tag "<strong>${v}</strong>"</div>`;
+      }
+      return `<div style="padding:.4rem .75rem;cursor:pointer;font-size:.82rem;display:flex;justify-content:space-between;align-items:center" onmousedown="event.preventDefault();addContactModalTag('${t.replace(/'/g,"\\'")}')" onmouseover="this.style.background='var(--blue-light)'" onmouseout="this.style.background=''">${t}</div>`;
+    }).join('')
+    +`</div>`;
+}
+
+document.getElementById('caContactTagInput').addEventListener('keydown',function(e){
+  if(e.key==='Enter'||e.key===','){ e.preventDefault(); const v=this.value.trim(); if(v) addContactModalTag(v); }
+  if(e.key==='Escape'){ document.getElementById('caTagSuggest').innerHTML=''; }
+});
+document.getElementById('caContactTagInput').addEventListener('blur',function(){
+  setTimeout(()=>{ document.getElementById('caTagSuggest').innerHTML=''; }, 150);
+});
+
+/* ════════════════════════════════════════
+   BULK ACTIONS
+════════════════════════════════════════ */
+function bulkTag(){
+  caBulkMode='tag';
+  document.getElementById('caBulkTagTitle').textContent='Ajouter un tag';
+  document.getElementById('caBulkTagDesc').textContent='Ajouter le tag sélectionné aux numéros concernés';
+  document.getElementById('caBulkTagResetWrap').style.display='flex';
+  const sel=document.getElementById('caBulkTagSel');
+  sel.innerHTML='<option value="">Sélectionner un tag</option>'+caGetAllTags().map(t=>`<option value="${t}">${t}</option>`).join('');
+  openCaModal('caBulkTagModal');
+}
+function bulkRemoveTag(){
+  caBulkMode='removeTag';
+  document.getElementById('caBulkTagTitle').textContent='Supprimer tags';
+  document.getElementById('caBulkTagDesc').textContent='Supprimer le tag sélectionné des numéros concernés';
+  document.getElementById('caBulkTagResetWrap').style.display='none';
+  const sel=document.getElementById('caBulkTagSel');
+  sel.innerHTML='<option value="">Sélectionner un tag</option>'+caGetAllTags().map(t=>`<option value="${t}">${t}</option>`).join('');
+  openCaModal('caBulkTagModal');
+}
+async function confirmBulkTag(){
+  const tag=document.getElementById('caBulkTagSel').value;
+  if(!tag){showToast('⚠️ Sélectionnez un tag');return;}
+  const reset=document.getElementById('caBulkTagReset').checked;
+  const tels=[...caSelected];
+  try{
+    const action = caBulkMode==='tag' ? 'add_tag' : 'remove_tag';
+    if(caBulkMode==='tag' && reset){
+      for(const t of caGetAllTags()){
+        await fetch(BASE()+'/api/contacts/bulk',{
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({action:'remove_tag', telephones:tels, tag:t})
+        });
+      }
+    }
+    const res=await fetch(BASE()+'/api/contacts/bulk',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action, telephones:tels, tag})
+    });
+    const data=await res.json();
+    if(!res.ok){showToast('❌ '+(data.error||'Erreur API'));return;}
+    closeCaModal('caBulkTagModal');
+    showToast(caBulkMode==='tag'?`🏷 Tag "${tag}" appliqué à ${data.affected} contacts`:`🗑 Tag "${tag}" supprimé de ${data.affected} contacts`);
+    await reloadCaContacts();
+  } catch(e){ showToast('❌ Erreur réseau : '+e.message); }
+}
+function bulkDelete(){
+  const tels=[...caSelected];
+  caDeleteTarget={bulk:true,tels};
+  document.getElementById('caDeleteTitle').textContent=`Êtes-vous sûr de vouloir supprimer les ${tels.length} contacts actuellement affichés ?`;
+  document.getElementById('caDeleteBody').textContent='Cette action est irréversible. Voulez-vous continuer ?';
+  openCaModal('caDeleteModal');
+}
+
+/* ════════════════════════════════════════
+   IMPORT WIZARD
+════════════════════════════════════════ */
+wizStep=1; wizCSVData=[]; wizCSVHeaders=[]; wizImportTags=[];
+
+function openImportWizard(){
+  wizStep=1; wizCSVData=[]; wizCSVHeaders=[]; wizImportTags=[];
+  importContactTagsArr=[];
+  document.getElementById('uploadName').style.display='none';
+  document.getElementById('uploadZone').classList.remove('drag');
+  document.getElementById('csvFileInput').value='';
+  renderImportTags();
+  setWizStep(1);
+  openCaModal('caImportModal');
+}
+
+function setWizStep(n){
+  wizStep=n;
+  [1,2,3,4].forEach(i=>{
+    const s=document.getElementById('wStep'+i), p=document.getElementById('wPane'+i);
+    s.className='wiz-step'+(i===n?' active':i<n?' done':'');
+    p.className='wiz-pane'+(i===n?' active':'');
+  });
+  document.getElementById('wBtnBack').style.display=n>1&&n<4?'':'none';
+  document.getElementById('wBtnNext').style.display=n<4?'':'none';
+  document.getElementById('wBtnNext').textContent=n===3?'Importer →':'Continuer →';
+}
+
+function wizNext(){
+  if(wizStep===1){
+    if(!wizCSVData.length){showToast('⚠️ Choisissez un fichier CSV');return;}
+    buildColMapping();setWizStep(2);
+  } else if(wizStep===2){
+    buildImportSummary();setWizStep(3);
+  } else if(wizStep===3){
+    setWizStep(4);runImport();
+  }
+}
+function wizBack(){if(wizStep>1&&wizStep<4)setWizStep(wizStep-1);}
+
+function handleCSVFile(file){
+  if(!file)return;
+  document.getElementById('uploadNameText').textContent=file.name;
+  document.getElementById('uploadName').style.display='flex';
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const text=e.target.result;
+    const lines=text.split(/\r?\n/).filter(l=>l.trim());
+    if(!lines.length)return;
+    const sep=lines[0].includes(';')?';':',';
+    wizCSVHeaders=lines[0].split(sep).map(h=>h.trim().replace(/^"|"$/g,''));
+    wizCSVData=lines.slice(1).map(l=>l.split(sep).map(v=>v.trim().replace(/^"|"$/g,'')));
+    wizFileName=file.name;
+  };
+  reader.readAsText(file,'UTF-8');
+}
+
+function handleCSVDrop(e){
+  e.preventDefault();document.getElementById('uploadZone').classList.remove('drag');
+  const f=e.dataTransfer.files[0];
+  if(f)handleCSVFile(f);
+  document.getElementById('csvFileInput').files=e.dataTransfer.files;
+}
+
+const FIELD_OPTS=['-- Ignorer --','telephone','nom','prenom','email'];
+function buildColMapping(){
+  const grid=document.getElementById('colMapGrid');
+  grid.innerHTML=wizCSVHeaders.map((h,i)=>{
+    let auto=FIELD_OPTS.findIndex(f=>f.toLowerCase().includes(h.toLowerCase()))||0;
+    if(h.toLowerCase().match(/tel|phone|msisdn/))auto=1;
+    if(h.toLowerCase().match(/^nom$|surname|last/))auto=2;
+    if(h.toLowerCase().match(/pr[ée]nom|first/))auto=3;
+    if(h.toLowerCase().match(/email|mail/))auto=4;
+    return `<div class="col-map-grid">
+      <div class="col-raw">${h}</div>
+      <div class="col-map-arrow">→</div>
+      <select class="col-sel" id="colMap${i}">${FIELD_OPTS.map((f,j)=>`<option value="${f}" ${j===auto?'selected':''}>${f}</option>`).join('')}</select>
+    </div>`;
+  }).join('');
+  // CSV preview
+  const pt=document.getElementById('csvPreviewTable');
+  const rows=wizCSVData.slice(0,5);
+  pt.innerHTML=`<thead style="background:var(--gray-light)"><tr>${wizCSVHeaders.map(h=>`<th style="padding:.3rem .6rem;font-size:.7rem;border:1px solid var(--border)">${h}</th>`).join('')}</tr></thead><tbody>`
+    +rows.map(r=>`<tr>${r.map(v=>`<td style="padding:.28rem .6rem;font-size:.72rem;border:1px solid var(--border)">${v}</td>`).join('')}</tr>`).join('')+`</tbody>`;
+}
+
+let wizFileName='';
+function buildImportSummary(){
+  // read mapping
+  const mapping={};
+  wizCSVHeaders.forEach((h,i)=>{
+    const v=document.getElementById('colMap'+i).value;
+    if(v!=='-- Ignorer --') mapping[v]=i;
+  });
+  window._wizMapping=mapping;
+  const total=wizCSVData.length;
+  const valid=wizCSVData.filter(r=>r[mapping['telephone']]&&r[mapping['telephone']].trim()).length;
+  document.getElementById('sumFile').textContent=wizFileName||'fichier.csv';
+  document.getElementById('sumTotal').textContent=total;
+  document.getElementById('sumValid').textContent=valid;
+  // tags from import field
+  const tagChips=document.getElementById('importTagsWrap').querySelectorAll('.ca-tag-chip');
+  const tagNames=[...tagChips].map(c=>c.textContent.slice(0,-1).trim());
+  wizImportTags=tagNames;
+  document.getElementById('sumTags').innerHTML=tagNames.length?tagNames.map(t=>`<span class="tag-pill">${t}</span>`).join(''):`<span style="color:var(--muted)">Aucun</span>`;
+}
+
+async function runImport(){
+  const mapping=window._wizMapping||{};
+  const bar=document.getElementById('importProgress');
+  const total=wizCSVData.length;
+  document.getElementById('wPane4Title').textContent='Import en cours...';
+  document.getElementById('wFooter').style.display='none';
+  let imported=0, dups=0, errors=0;
+  const BATCH=20;
+
+  // Construire tous les contacts valides
+  const contactsToSend=[];
+  for(let i=0;i<total;i++){
+    const row=wizCSVData[i];
+    const tel=(row[mapping['telephone']]||'').trim().replace(/\s/g,'');
+    if(!tel)continue;
+    contactsToSend.push({
+      telephone:tel,
+      nom:(row[mapping['nom']]||'').trim(),
+      prenom:(row[mapping['prenom']]||'').trim(),
+      email:(row[mapping['email']]||'').trim(),
+      pays:'TN',
+      tags:[...wizImportTags],
+    });
+  }
+
+  // Envoyer par batch à l'API
+  for(let i=0;i<contactsToSend.length;i+=BATCH){
+    const batch=contactsToSend.slice(i,i+BATCH);
+    await Promise.all(batch.map(async c=>{
+      try{
+        const res=await fetch(BASE()+'/api/contacts',{
+          method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(c)
+        });
+        if(res.status===409) dups++;
+        else if(res.ok) imported++;
+        else errors++;
+      }catch{ errors++; }
+    }));
+    const pct=Math.round(Math.min(i+BATCH,contactsToSend.length)/contactsToSend.length*100);
+    bar.style.width=pct+'%'; bar.textContent=pct+'%';
+    await new Promise(r=>setTimeout(r,50));
+  }
+
+  bar.style.width='100%'; bar.textContent='100%';
+  document.getElementById('wPane4Title').textContent='✅ Importation terminée !';
+  showToast(`✅ ${imported} importés · ${dups} doublons · ${errors} erreurs`);
+  await reloadCaContacts();
+  setTimeout(()=>{closeCaModal('caImportModal');document.getElementById('wFooter').style.display='';},1200);
+}
+
+/* Import tags widget */
+let importContactTagsArr=[];
+let importTagDdOpen=false;
+
+function caSuggestImportTags(val){
+  const all=caGetAllTags().filter(t=>t.toLowerCase().includes(val.toLowerCase())&&!importContactTagsArr.includes(t));
+  const ddId='importTagDd';
+  let dd=document.getElementById(ddId);
+  if(!dd){
+    dd=document.createElement('div');
+    dd.id=ddId;
+    dd.style.cssText='position:absolute;width:100%;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-xs);box-shadow:var(--shadow-md);z-index:9999;max-height:180px;overflow-y:auto;top:100%;left:0';
+    document.getElementById('importTagsWrap').style.position='relative';
+    document.getElementById('importTagsWrap').appendChild(dd);
+  }
+  if(!all.length && !val.trim()){dd.style.display='none';return;}
+  const items=[...all.slice(0,8)];
+  if(val.trim()&&!caGetAllTags().includes(val.trim())&&!importContactTagsArr.includes(val.trim())){
+    items.unshift('__new__:'+val.trim());
+  }
+  if(!items.length){dd.style.display='none';return;}
+  dd.style.display='block';
+  dd.innerHTML=items.map(t=>{
+    if(t.startsWith('__new__:')){
+      const v=t.slice(8);
+      return `<div style="padding:.42rem .75rem;cursor:pointer;font-size:.82rem;color:var(--blue);font-weight:600;border-bottom:1px solid var(--border)"
+        onmousedown="event.preventDefault();addImportTag('${v.replace(/'/g,"\\'")}')"
+        onmouseover="this.style.background='var(--blue-light)'" onmouseout="this.style.background=''">
+        ➕ Créer tag "<strong>${v}</strong>"</div>`;
+    }
+    return `<div style="padding:.42rem .75rem;cursor:pointer;font-size:.82rem;display:flex;justify-content:space-between;align-items:center"
+      onmousedown="event.preventDefault();addImportTag('${t.replace(/'/g,"\\'")}')"
+      onmouseover="this.style.background='var(--blue-light)'" onmouseout="this.style.background=''">${t}</div>`;
+  }).join('');
+}
+
+function closeImportTagDd(){
+  const dd=document.getElementById('importTagDd');
+  if(dd) dd.style.display='none';
+}
+
+function addImportTag(tag){
+  tag=tag.trim();
+  if(!tag||importContactTagsArr.includes(tag))return;
+  importContactTagsArr.push(tag);
+  document.getElementById('importTagInput').value='';
+  renderImportTags();
+  closeImportTagDd();
+}
+
+document.getElementById('importTagInput').addEventListener('keydown',function(e){
+  if(e.key==='Enter'||e.key===','){
+    e.preventDefault();
+    const v=this.value.trim();
+    if(v) addImportTag(v);
+  }
+  if(e.key==='Escape') closeImportTagDd();
+});
+document.getElementById('importTagInput').addEventListener('blur',function(){
+  setTimeout(closeImportTagDd, 150);
+});
+
+function renderImportTags(){
+  const wrap=document.getElementById('importTagsWrap'),input=document.getElementById('importTagInput');
+  wrap.querySelectorAll('.ca-tag-chip').forEach(e=>e.remove());
+  importContactTagsArr.forEach(tag=>{
+    const chip=document.createElement('span');chip.className='ca-tag-chip';
+    chip.innerHTML=`${tag} <span class="rm" onmousedown="event.preventDefault();removeImportTag('${tag.replace(/'/g,"\\'")}')" >×</span>`;
+    wrap.insertBefore(chip,input);
+  });
+}
+function removeImportTag(tag){importContactTagsArr=importContactTagsArr.filter(t=>t!==tag);renderImportTags();}
+
+/* ════════════════════════════════════════
+   MODAL HELPERS
+════════════════════════════════════════ */
+function openCaModal(id){document.getElementById(id).classList.add('open');}
+function closeCaModal(id){document.getElementById(id).classList.remove('open');}
+['caContactModal','caViewModal','caDeleteModal','caImportModal','caBulkTagModal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)closeCaModal(id);});
+});
+
+/* ════════════════════════════════════════
+   INIT
+════════════════════════════════════════ */
+window.addEventListener('load',()=>{
+  checkHealth();
+  loadAllContacts().then(()=>{
+    reloadCaContacts();
+  }).catch(()=>{ reloadCaContacts(); });
+});
+
 </script>
 </body>
 </html>
