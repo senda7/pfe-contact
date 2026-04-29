@@ -344,7 +344,7 @@ label{font-weight:600;font-size:.82rem;display:block;margin-bottom:.32rem;color:
         <label>Contacts</label>
         <div class="search-box">
           <span class="search-icon">🔍</span>
-          <input type="text" id="contactSearch" placeholder="Tapez un numéro, un nom, un prénom ou un email..." oninput="filterContacts()" style="padding-left:2rem">
+          <textarea id="contactSearch" placeholder="Tapez un ou plusieurs numéros, noms, emails... (séparés par virgule, espace ou saut de ligne)" oninput="filterContacts()" style="padding-left:2rem;resize:vertical;min-height:38px;max-height:120px;line-height:1.4;padding-top:8px;width:100%;box-sizing:border-box;font-size:inherit;font-family:inherit"></textarea>
         </div>
       </div>
       <div style="margin-bottom:1rem">
@@ -887,18 +887,53 @@ document.getElementById('tagInput').addEventListener('keydown',function(e){
 });
 
 function filterContacts(){
-  const search=document.getElementById('contactSearch').value.toLowerCase().trim();
-  filteredContacts=allContacts.filter(c=>{
-    const mt=activeTags.length===0||activeTags.some(t=>c.tag===t);
-    const ms=!search||(c.nom||'').toLowerCase().includes(search)||(c.prenom||'').toLowerCase().includes(search)||(c.email||'').toLowerCase().includes(search)||(c.telephone||'').includes(search);
-    return mt&&ms;
-  });
-  renderContactsTable(filteredContacts);updateStats();
+  const raw = document.getElementById('contactSearch').value;
+  // Découper par virgule, point-virgule, saut de ligne
+  const terms = raw.split(/[,;\n\r]+/).map(s=>s.trim().toLowerCase()).filter(s=>s.length>0);
+  // Si rien du tout : afficher message initial
+  if(activeTags.length===0 && terms.length===0){ filteredContacts=[]; renderContactsTable([]); updateStats(); return; }
+  // Source unifiee : caContacts (MySQL) en priorite, sinon allContacts (API)
+  const source = caContacts.length > 0 ? caContacts : allContacts;
+
+  const seen = new Set();
+  filteredContacts = [];
+
+  // 1. Contacts par tag (union)
+  if(activeTags.length > 0){
+    source.forEach(c => {
+      const cTags = Array.isArray(c.tags) ? c.tags : (c.tag ? [c.tag] : []);
+      if(activeTags.some(t=>cTags.map(x=>x.toLowerCase()).includes(t.toLowerCase())) && !seen.has(c.telephone)){
+        seen.add(c.telephone); filteredContacts.push(c);
+      }
+    });
+  }
+
+  // 2. Contacts par recherche multi-termes dans TOUTE la base (union)
+  if(terms.length > 0){
+    source.forEach(c => {
+      if(seen.has(c.telephone)) return;
+      const match = terms.some(term =>
+        (c.nom||'').toLowerCase().includes(term)
+        || (c.prenom||'').toLowerCase().includes(term)
+        || (c.email||'').toLowerCase().includes(term)
+        || (c.telephone||'').includes(term)
+      );
+      if(match){ seen.add(c.telephone); filteredContacts.push(c); }
+    });
+  }
+
+  renderContactsTable(filteredContacts); updateStats();
 }
 
 function renderContactsTable(contacts){
   const tbody=document.getElementById('contactsTbody');
-  if(!contacts.length){tbody.innerHTML=`<tr><td colspan="5" class="empty"><div class="empty-icon">👥</div>${activeTags.length?'Aucun contact pour ces tags':'Sélectionnez un tag'}</td></tr>`;return;}
+  if(!contacts.length){
+    const msg = activeTags.length===0 && !document.getElementById('contactSearch').value.trim().length
+      ? 'Sélectionnez un tag pour afficher les contacts'
+      : 'Aucun contact trouvé';
+    tbody.innerHTML=`<tr><td colspan="5" class="empty"><div class="empty-icon">👥</div>${msg}</td></tr>`;
+    return;
+  }
   tbody.innerHTML=contacts.map(c=>{
     const checked=selectedMsisdns.has(c.telephone);
     return `<tr class="${checked?'selected':''}" onclick="toggleRow('${c.telephone}',this)">
@@ -925,7 +960,21 @@ function toggleAll(chk){
   else filteredContacts.forEach(c=>selectedMsisdns.delete(c.telephone));
   renderContactsTable(filteredContacts);updateStats();
 }
-function clearSelection(){selectedMsisdns.clear();renderContactsTable(filteredContacts);updateStats();}
+function clearSelection(){
+  // Reset tags
+  activeTags=[];
+  renderActiveTags();
+  // Reset textarea
+  document.getElementById('contactSearch').value='';
+  // Reset selection
+  selectedMsisdns.clear();
+  filteredContacts=[];
+  renderContactsTable([]);
+  // Reset header checkbox
+  const chkAll = document.getElementById('chkAll');
+  if(chkAll) chkAll.checked = false;
+  updateStats();
+}
 function updateStats(){
   const sel=selectedMsisdns.size,total=filteredContacts.length;
   document.getElementById('selCount').textContent=`${sel} sélectionné(s) sur ${total}`;
@@ -1474,7 +1523,8 @@ function bulkTag(){
   document.getElementById('caBulkTagDesc').textContent='Ajouter le tag sélectionné aux numéros concernés';
   document.getElementById('caBulkTagResetWrap').style.display='flex';
   const sel=document.getElementById('caBulkTagSel');
-  sel.innerHTML='<option value="">Sélectionner un tag</option>'+caGetAllTags().map(t=>`<option value="${t}">${t}</option>`).join('');
+  const tags3=caGetAllTags();
+  sel.innerHTML='<option value="">Sélectionner un tag</option>'+tags3.map(t=>`<option value="${t}">${t}</option>`).join('');
   openCaModal('caBulkTagModal');
 }
 function bulkRemoveTag(){
@@ -1483,7 +1533,8 @@ function bulkRemoveTag(){
   document.getElementById('caBulkTagDesc').textContent='Supprimer le tag sélectionné des numéros concernés';
   document.getElementById('caBulkTagResetWrap').style.display='none';
   const sel=document.getElementById('caBulkTagSel');
-  sel.innerHTML='<option value="">Sélectionner un tag</option>'+caGetAllTags().map(t=>`<option value="${t}">${t}</option>`).join('');
+  const tags4=caGetAllTags();
+  sel.innerHTML='<option value="">Sélectionner un tag</option>'+tags4.map(t=>`<option value="${t}">${t}</option>`).join('');
   openCaModal('caBulkTagModal');
 }
 async function confirmBulkTag(){
@@ -1497,13 +1548,13 @@ async function confirmBulkTag(){
       for(const t of caGetAllTags()){
         await fetch(BASE()+'/api/contacts/bulk',{
           method:'POST', headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({action:'remove_tag', telephones:tels, tag:t})
+          body:JSON.stringify({action:'remove_tag', telephones:tels, tags:[t]})
         });
       }
     }
     const res=await fetch(BASE()+'/api/contacts/bulk',{
       method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action, telephones:tels, tag})
+      body:JSON.stringify({action, telephones:tels, tags:[tag]})
     });
     const data=await res.json();
     if(!res.ok){showToast('❌ '+(data.error||'Erreur API'));return;}
